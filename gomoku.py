@@ -25,15 +25,15 @@ def drawBoard(board):
 		print('-----------------------')
 		for j in range(0, length):
 			if j == length - 1:
-				print(' ' + board[i][j] + ' ')
+				print(board[i][j] + ' ')
 			else:
-				print(' ' + board[i][j] + ' |'),
+				print(board[i][j] + ' |'),
 	return 0
 
-def runGames():
+def runGames(gridSize, nInARow, numComputerAgents, numHumanAgents):
 	print('Welcome to our Gomoku game for CS221')
 	while True:
-		myBoard = createBoard(5)
+		myBoard = createBoard(gridSize)
 		playerOneLetter, playerTwoLetter = ('X', 'O')
 		gameIsPlaying = True
 		turn = 'playerOne'
@@ -79,36 +79,39 @@ def repl(args):
 	numHumanAgents = 1
 
 	argumentsString = '''
-		# ============================================
-		# Arguments (in order):
-		# ============================================
-		# gridSize - Int representing the NxX dimension of the board (default: 5)
-		# nInARow - Int representing the number of pieces in a row to win (default: 5)
-		# numComputerAgents - Number of AI agents the user will play against (default: 1)
-		# numHumanAgents - Number of human players in this game (default: 1)'''
+============================================
+Arguments (in order):
+============================================
+gridSize - Int representing the NxX dimension of the board (default: 5)
+nInARow - Int representing the number of pieces in a row to win (default: 5)
+numComputerAgents - Number of AI agents the user will play against (default: 1)
+numHumanAgents - Number of human players in this game (default: 1)
+'''
 	
 	#Parse arguments
 	if len(args) > 4:
-		print "Did not enter valid arguments!"
+		print "\nDid not enter valid arguments!"
 		print argumentsString
+		return
 	if len(args) > 3 and isInt(args[3]):
-		numHumanAgents = args[3]
-
+		numHumanAgents = int(args[3])
 	if len(args) > 2 and isInt(args[2]):
-		numComputerAgents = args[2]
+		numComputerAgents = int(args[2])
 	if len(args) > 1 and isInt(args[1]):
-		nInARow = args[1]
+		nInARow = int(args[1])
 	if len(args) >= 1 and isInt(args[0]):
-		gridSize = args[0]
+		gridSize = int(args[0])
 
+	print('Welcome to our Gomoku game for CS221')
 	print "Grid Size: " + str(gridSize)
 	print "N in a row: " + str(nInARow)
 	print "Computers: " + str(numComputerAgents)
 	print "Humans: " + str(numHumanAgents)
-	# runGames()
-	# while True:
 
-
+	#TODO: Allow the user to play another game after completing one game
+	while True:
+		runGames(gridSize, nInARow, numComputerAgents, numHumanAgents)
+		break
 
 if __name__ == '__main__':
 	args = sys.argv[1:] # Get game components based on input
