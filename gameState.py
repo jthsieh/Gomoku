@@ -69,7 +69,17 @@ class GameState():
             self.winner = player
 
     def __str__(self):
-        return str(self.board)
+        s = ''
+        for y in range(self.boardSize):
+            for x in range(self.boardSize):
+                if (x, y) not in self.board:
+                    s += '+'
+                elif self.board[(x, y)] == 0:
+                    s += 'x'
+                else:
+                    s += 'o'
+            s += '\n'
+        return s
 
 
     def withinBounds(self, move):
