@@ -34,6 +34,7 @@ class RandomAgent(Agent):
 			for y in yAxis:
 				move = (x,y)
 				if state.moveIsValid(self.index, move):
+					print "Player " + str(self.index) + " has moved at " + str(move)
 					return move
 
 class HumanAgent(Agent):
