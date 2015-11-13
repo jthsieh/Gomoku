@@ -1,3 +1,6 @@
+import sys
+from util import isInt
+
 #Class agent is lifted directly from the pacman code
 class Agent:
   """
@@ -24,7 +27,7 @@ class RandomAgent(Agent):
 		for x in range(state.boardSize):
 			for y in range(state.boardSize):
 				move = (x,y)
-				if state.moveIsValid(index, move):
+				if state.moveIsValid(self.index, move):
 					return move
 
 class HumanAgent(Agent):
@@ -45,7 +48,7 @@ class HumanAgent(Agent):
 				continue
 
 			#Play move if it's valid
-			if gameState.moveIsValid(player, coordinates):
+			if state.moveIsValid(player, coordinates):
 				return coordinates
 			else:
 				continue
