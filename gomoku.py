@@ -3,33 +3,26 @@ import os
 import sys
 from gameState import GameState
 
-#function createBoard:
-#--------------------
-#Create a grid of size n by n
-def createBoard(n):
-	#Generate rows with length of n
-	board = []
-	for row in range(n):
-	# Append a blank list to each row cell
-		board.append([])
-		for column in range(n):
-		# Assign x to each row
-			board[row].append('X')
-	return board
 
-#Create the graphic of the current board
-def drawBoard(board):
-	# This function prints out the board that it was passed.
-	# "board" is a list of 10 strings representing the board (ignore index 0)
-	length = len(board)
-	for i in range(0, length)[::-1]:
-		print('-----------------------')
-		for j in range(0, length):
-			if j == length - 1:
-				print(board[i][j] + ' ')
-			else:
-				print(board[i][j] + ' |'),
-	return 0
+#Returns a valid coordinate for the current player to make a move
+def getValidMove(player, gameState):
+	while True:
+		print "Player " + str(player) + ": Please Enter your next move (In form X,Y)"
+
+		#Process coordinate input
+		coordinates = sys.stdin.readline().strip().split(",")
+		validInput = len(coordinates) == 2 and isInt(coordinates[0]) and isInt(coordinates[1])
+		if validInput:
+			coordinates = (int(coordinates[0]), int(coordinates[1])) #Convert to tuple of ints
+		else:
+			continue
+
+		#Play move if it's valid
+		if gameState.moveIsValid(player, coordinates):
+			return coordinates
+		else:
+			continue
+
 
 #Currently hardcoded to two human players
 def runGames(gridSize, nInARow, numComputerAgents, numHumanAgents):
@@ -37,11 +30,22 @@ def runGames(gridSize, nInARow, numComputerAgents, numHumanAgents):
 	gameState = GameState(nInARow, gridSize)
 
 	playerOneLetter, playerTwoLetter = ('X', 'O')
-	turn = 'playerOne'
+	turn = 0
 	while not gameState.gameEnded():
 		print gameState
-		inputString = sys.stdin.readline()
-		print "Input: " + str(inputString)
+
+		#Read input until we get a valid move to play
+		move = getValidMove(turn, gameState)
+		gameState.makeMove(turn, move)
+		turn = (turn + 1) % 2
+
+	print gameState
+	print "Game has ended!"
+	if gameState.getWinner() == -1:
+		print "The game was a tie."
+	else:
+		print "Player " + str(gameState.getWinner()) + " won the game!"
+			
 	return 0
 
 # Check if string represents an int
@@ -98,7 +102,7 @@ numHumanAgents - Number of human players in this game (default: 1)
 	print "Grid Size: " + str(gridSize)
 	print "N in a row: " + str(nInARow)
 	print "Computers: " + str(numComputerAgents)
-	print "Humans: " + str(numHumanAgents)
+	print "Humans: " + str(numHumanAgents) + "\n"
 
 	#TODO: Allow the user to play another game after completing one game
 	while True:

@@ -75,9 +75,9 @@ class GameState():
                 if (x, y) not in self.board:
                     s += ' + |'
                 elif self.board[(x, y)] == 0:
-                    s += ' x |'
+                    s += ' X |'
                 else:
-                    s += ' o |'
+                    s += ' O |'
             s += "\n" + (4 * self.boardSize * "-") +'\n'
         return s
 
