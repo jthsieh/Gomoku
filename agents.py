@@ -1,5 +1,6 @@
 import sys
 from util import isInt
+import random
 
 #Class agent is lifted directly from the pacman code
 class Agent:
@@ -24,8 +25,13 @@ class RandomAgent(Agent):
 		self.index = index
 
 	def getAction(self, state):
-		for x in range(state.boardSize):
-			for y in range(state.boardSize):
+		xAxis = range(state.boardSize)
+		random.shuffle(xAxis)
+
+		yAxis = range(state.boardSize)
+		random.shuffle(yAxis)
+		for x in xAxis:
+			for y in yAxis:
 				move = (x,y)
 				if state.moveIsValid(self.index, move):
 					return move
