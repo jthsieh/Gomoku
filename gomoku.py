@@ -1,5 +1,6 @@
 import random
 import os
+import sys
 
 #function createBoard:
 #--------------------
@@ -40,12 +41,75 @@ def runGames():
 			if turn == 'playerOne':
 			#Player 1's turn
 				drawBoard(myBoard)
-			break
-		break
+			inputString = sys.stdin.readline()
+			print "Input: " + str(inputString)
 	return 0
+
+# Check if string represents an int
+# http://stackoverflow.com/questions/1265665/python-check-if-a-string-represents-an-int-without-using-try-except
+def isInt(str):
+	try:
+		int(str)
+		return True
+	except:
+		return False
+
+# Repl is a read, evaluate, print loop
+# Parses the args entered in the command line to set up the game and
+# allow the user to enter in moves to play the game
+# Ex: python gomoku.py 5 3 1 1
+# Ex: move (0,5)
+# ============================================
+# Arguments (in order):
+# ============================================
+# gridSize - Int representing the NxX dimension of the board (default: 5)
+# nInARow - Int representing the number of pieces in a row to win (default: 5)
+# numComputerAgents - Number of AI agents the user will play against (default: 1)
+# numHumanAgents - Number of human players in this game (default: 1)
+# ============================================
+# Commands
+# ============================================
+# move - Places your piece at 
+
+def repl(args):
+	#Defaults
+	gridSize = 5
+	nInARow = 5
+	numComputerAgents = 1
+	numHumanAgents = 1
+
+	argumentsString = '''
+		# ============================================
+		# Arguments (in order):
+		# ============================================
+		# gridSize - Int representing the NxX dimension of the board (default: 5)
+		# nInARow - Int representing the number of pieces in a row to win (default: 5)
+		# numComputerAgents - Number of AI agents the user will play against (default: 1)
+		# numHumanAgents - Number of human players in this game (default: 1)'''
+	
+	#Parse arguments
+	if len(args) > 4:
+		print "Did not enter valid arguments!"
+		print argumentsString
+	if len(args) > 3 and isInt(args[3]):
+		numHumanAgents = args[3]
+
+	if len(args) > 2 and isInt(args[2]):
+		numComputerAgents = args[2]
+	if len(args) > 1 and isInt(args[1]):
+		nInARow = args[1]
+	if len(args) >= 1 and isInt(args[0]):
+		gridSize = args[0]
+
+	print "Grid Size: " + str(gridSize)
+	print "N in a row: " + str(nInARow)
+	print "Computers: " + str(numComputerAgents)
+	print "Humans: " + str(numHumanAgents)
+	# runGames()
+	# while True:
 
 
 
 if __name__ == '__main__':
-#      args = readCommand( sys.argv[1:] ) # Get game components based on input
-	  runGames()
+	args = sys.argv[1:] # Get game components based on input
+	repl(args)
