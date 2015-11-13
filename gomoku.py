@@ -14,28 +14,6 @@ class Game:
 		self.agents = []
 		self.moveHistory = []
 
-
-	# #Returns a valid coordinate for the current player to make a move
-	# def getValidMove(player, gameState):
-	# 	while True:
-	# 		print "Player " + str(player) + ": Please Enter your next move (In form X,Y)"
-
-	# 		#Process coordinate input
-	# 		coordinates = sys.stdin.readline().strip().split(",")
-	# 		validInput = len(coordinates) == 2 and isInt(coordinates[0]) and isInt(coordinates[1])
-	# 		if validInput:
-	# 			coordinates = (int(coordinates[0]), int(coordinates[1])) #Convert to tuple of ints
-	# 		else:
-	# 			continue
-
-	# 		#Play move if it's valid
-	# 		if gameState.moveIsValid(player, coordinates):
-	# 			return coordinates
-	# 		else:
-	# 			continue
-
-
-	#Currently hardcoded to two human players
 	#Runs a full game until completion
 	def runGames(self, gridSize, nInARow, numComputerAgents, numHumanAgents):
 		self.state = GameState(nInARow, gridSize, numComputerAgents + numHumanAgents)
