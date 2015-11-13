@@ -67,6 +67,8 @@ class GameState():
         if self.checkWinCondition(player, move):
             self.gameOver = True
             self.winner = player
+        elif self.checkTie():
+            self.gameOver = True
 
     def __str__(self):
         s = ''
@@ -84,6 +86,12 @@ class GameState():
 
     def withinBounds(self, move):
         return move[0] >= 0 and move[0] < self.boardSize and move[1] >= 0 and move[1] < self.boardSize
+
+    def checkTie(self):
+        if len(self.board.keys()) == self.boardSize**2:
+            return True
+        else:
+            return False
 
     def checkWinCondition(self, player, move):
         """

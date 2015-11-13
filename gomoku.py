@@ -25,19 +25,21 @@ def getValidMove(player, gameState):
 
 
 #Currently hardcoded to two human players
+#Runs a full game until completion
 def runGames(gridSize, nInARow, numComputerAgents, numHumanAgents):
 	gameIsPlaying = True
 	gameState = GameState(nInARow, gridSize)
 
 	playerOneLetter, playerTwoLetter = ('X', 'O')
 	turn = 0
+
 	while not gameState.gameEnded():
 		print gameState
 
 		#Read input until we get a valid move to play
 		move = getValidMove(turn, gameState)
 		gameState.makeMove(turn, move)
-		turn = (turn + 1) % 2
+		turn = (turn + 1) % 2 #TODO: GENERALIZE TO N players
 
 	print gameState
 	print "Game has ended!"
