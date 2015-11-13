@@ -34,7 +34,7 @@ def drawBoard(board):
 #Currently hardcoded to two human players
 def runGames(gridSize, nInARow, numComputerAgents, numHumanAgents):
 	gameIsPlaying = True
-	gameState = GameState(gridSize, nInARow)
+	gameState = GameState(nInARow, gridSize)
 
 	playerOneLetter, playerTwoLetter = ('X', 'O')
 	turn = 'playerOne'
