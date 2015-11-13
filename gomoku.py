@@ -2,26 +2,29 @@ import random
 import os
 import sys
 from gameState import GameState
+from agents import Agent
+from agents import RandomAgent
+from agents import HumanAgent
 
 
-#Returns a valid coordinate for the current player to make a move
-def getValidMove(player, gameState):
-	while True:
-		print "Player " + str(player) + ": Please Enter your next move (In form X,Y)"
+# #Returns a valid coordinate for the current player to make a move
+# def getValidMove(player, gameState):
+# 	while True:
+# 		print "Player " + str(player) + ": Please Enter your next move (In form X,Y)"
 
-		#Process coordinate input
-		coordinates = sys.stdin.readline().strip().split(",")
-		validInput = len(coordinates) == 2 and isInt(coordinates[0]) and isInt(coordinates[1])
-		if validInput:
-			coordinates = (int(coordinates[0]), int(coordinates[1])) #Convert to tuple of ints
-		else:
-			continue
+# 		#Process coordinate input
+# 		coordinates = sys.stdin.readline().strip().split(",")
+# 		validInput = len(coordinates) == 2 and isInt(coordinates[0]) and isInt(coordinates[1])
+# 		if validInput:
+# 			coordinates = (int(coordinates[0]), int(coordinates[1])) #Convert to tuple of ints
+# 		else:
+# 			continue
 
-		#Play move if it's valid
-		if gameState.moveIsValid(player, coordinates):
-			return coordinates
-		else:
-			continue
+# 		#Play move if it's valid
+# 		if gameState.moveIsValid(player, coordinates):
+# 			return coordinates
+# 		else:
+# 			continue
 
 
 #Currently hardcoded to two human players
@@ -31,9 +34,19 @@ def runGames(gridSize, nInARow, numComputerAgents, numHumanAgents):
 	gameState = GameState(nInARow, gridSize)
 
 	playerOneLetter, playerTwoLetter = ('X', 'O')
-	turn = 0
+	agentIndex = 0
 
 	while not gameState.gameEnded():
+		agent = self.agents[agentIndex]
+		
+
+
+
+
+
+
+
+
 		print gameState
 
 		#Read input until we get a valid move to play
@@ -105,6 +118,15 @@ numHumanAgents - Number of human players in this game (default: 1)
 	print "N in a row: " + str(nInARow)
 	print "Computers: " + str(numComputerAgents)
 	print "Humans: " + str(numHumanAgents) + "\n"
+
+	#Setup agents
+	self.agents = []
+	for i in range(numHumanAgents):
+		human = HumanAgent(len(self.agents))
+		self.agents.append(human)
+	for j in range(numComputerAgents):
+		computer = RandomAgent(len(self.agents))
+		self.agents.append(computer)
 
 	#TODO: Allow the user to play another game after completing one game
 	while True:

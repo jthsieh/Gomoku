@@ -88,7 +88,7 @@ class GameState():
         return move[0] >= 0 and move[0] < self.boardSize and move[1] >= 0 and move[1] < self.boardSize
 
     def checkTie(self):
-        if len(self.board.keys()) == self.boardSize**2:
+        if len(self.board.keys()) == self.boardSize**2 :
             return True
         else:
             return False
