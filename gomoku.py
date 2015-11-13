@@ -1,6 +1,7 @@
 import random
 import os
 import sys
+from gameState import GameState
 
 #function createBoard:
 #--------------------
@@ -30,19 +31,17 @@ def drawBoard(board):
 				print(board[i][j] + ' |'),
 	return 0
 
+#Currently hardcoded to two human players
 def runGames(gridSize, nInARow, numComputerAgents, numHumanAgents):
-	print('Welcome to our Gomoku game for CS221')
-	while True:
-		myBoard = createBoard(gridSize)
-		playerOneLetter, playerTwoLetter = ('X', 'O')
-		gameIsPlaying = True
-		turn = 'playerOne'
-		while gameIsPlaying:
-			if turn == 'playerOne':
-			#Player 1's turn
-				drawBoard(myBoard)
-			inputString = sys.stdin.readline()
-			print "Input: " + str(inputString)
+	gameIsPlaying = True
+	gameState = GameState(gridSize, nInARow)
+
+	playerOneLetter, playerTwoLetter = ('X', 'O')
+	turn = 'playerOne'
+	while not gameState.gameEnded():
+		print gameState
+		inputString = sys.stdin.readline()
+		print "Input: " + str(inputString)
 	return 0
 
 # Check if string represents an int
@@ -55,10 +54,8 @@ def isInt(str):
 		return False
 
 # Repl is a read, evaluate, print loop
-# Parses the args entered in the command line to set up the game and
-# allow the user to enter in moves to play the game
+# Parses the args entered in the command line to set up the game
 # Ex: python gomoku.py 5 3 1 1
-# Ex: move (0,5)
 # ============================================
 # Arguments (in order):
 # ============================================
@@ -66,11 +63,6 @@ def isInt(str):
 # nInARow - Int representing the number of pieces in a row to win (default: 5)
 # numComputerAgents - Number of AI agents the user will play against (default: 1)
 # numHumanAgents - Number of human players in this game (default: 1)
-# ============================================
-# Commands
-# ============================================
-# move - Places your piece at 
-
 def repl(args):
 	#Defaults
 	gridSize = 5
