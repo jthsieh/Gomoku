@@ -10,12 +10,17 @@ class GameState():
     There are two players: player 0 and 1. Player 0 goes first.
     """
 
-    def __init__(self, N, boardSize):
+    def __init__(self, N, boardSize, prevState = None):
         self.N = N
         self.boardSize = boardSize
-        self.board = {}
-        self.gameOver = False
-        self.winner = -1
+        if prevState == None:
+            self.board = {}
+            self.gameOver = False
+            self.winner = -1
+        else:
+            self.board = dict(prevState.board)
+            self.gameOver = prevState.gameOver
+            self.winner = prevState.winner
 
     def gameEnded(self):
         """
@@ -43,9 +48,17 @@ class GameState():
             return False
         return True
 
+    def generateSuccessor(self, player, move):
+        """
+        Make a copy of the current state, and simulate the move, and return that copy.
+        """
+        state = GameState(self.N, self.boardSize, self)
+        state.makeMove(player, move)
+        return state
+
     def makeMove(self, player, move):
         """
-        player makes a move
+        Player makes a move.
         """
         if not self.moveIsValid(player, move):
             return
@@ -55,8 +68,8 @@ class GameState():
             self.gameOver = True
             self.winner = player
 
-    def printState(self):
-        print self.board
+    def __str__(self):
+        return str(self.board)
 
 
     def withinBounds(self, move):
