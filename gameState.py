@@ -6,13 +6,15 @@ class GameState():
     Parameter:
          N:         N in a row.
          boardSize: the board will be boardSize x boardSize
+         numPlayers: How many total players in this game (including computers)
 
-    There are two players: player 0 and 1. Player 0 goes first.
+    There are N players.
     """
 
-    def __init__(self, N, boardSize, prevState = None):
+    def __init__(self, N, boardSize, numPlayers, prevState = None):
         self.N = N
         self.boardSize = boardSize
+        self.numPlayers = numPlayers
         if prevState == None:
             self.board = {}
             self.gameOver = False
@@ -30,18 +32,19 @@ class GameState():
 
     def getWinner(self):
         """
-        Returns the winner's number (0 or 1).
+        Returns the winner's number.
         If the game is a tie or hasn't ended, return -1
         """
         if self.gameOver:
             return self.winner
         return -1
 
-    def moveIsValid(self, player, move):
+    def moveIsValid(self, playerIndex, move):
         """
         Check if a move is valid.
         """
-        if player != 0 and player != 1:
+
+        if playerIndex < 0 or playerIndex >= self.numPlayers:
             return False
         # Out of bounds or that position already has a piece
         if not self.withinBounds(move) or move in self.board:
@@ -52,7 +55,7 @@ class GameState():
         """
         Make a copy of the current state, and simulate the move, and return that copy.
         """
-        state = GameState(self.N, self.boardSize, self)
+        state = GameState(self.N, self.boardSize, self.numPlayers, self)
         state.makeMove(player, move)
         return state
 
@@ -76,10 +79,8 @@ class GameState():
             for x in range(self.boardSize):
                 if (x, y) not in self.board:
                     s += ' + |'
-                elif self.board[(x, y)] == 0:
-                    s += ' X |'
                 else:
-                    s += ' O |'
+                    s += ' ' + str(self.board[(x,y)]) + ' |'
             s += "\n" + (4 * self.boardSize * "-") +'\n'
         return s
 

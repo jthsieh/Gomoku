@@ -38,10 +38,9 @@ class Game:
 	#Currently hardcoded to two human players
 	#Runs a full game until completion
 	def runGames(self, gridSize, nInARow, numComputerAgents, numHumanAgents):
-		self.state = GameState(nInARow, gridSize)
+		self.state = GameState(nInARow, gridSize, numComputerAgents + numHumanAgents)
 		print self.state
 
-		playerOneLetter, playerTwoLetter = ('X', 'O')
 		agentIndex = 0
 
 		while not self.state.gameEnded():
@@ -54,7 +53,7 @@ class Game:
 
 			print self.state
 
-			self.state.makeMove(agentIndex, action)
+			# self.state.makeMove(agentIndex, action)
 			agentIndex = (agentIndex + 1) % len(self.agents)
 
 		print "Game has ended!"
