@@ -24,6 +24,14 @@ class GameState():
             self.gameOver = prevState.gameOver
             self.winner = prevState.winner
 
+    def getLegalActions(self):
+        legalActions = []
+        for y in range(self.boardSize):
+            for x in range(self.boardSize):
+                if (x, y) not in self.board:
+                    legalActions.append(x,y)
+        return legalActions
+
     def gameEnded(self):
         """
         Return True if game has ended. False otherwise.
