@@ -12,6 +12,7 @@ class Agent:
   """
   def __init__(self, index=0):
     self.index = index
+    self.depth = 4
 
   def getAction(self, state):
     """
@@ -25,23 +26,30 @@ class MinimaxAgent(Agent):
     Your minimax agent with alpha-beta pruning (problem 2)
   """
 
+  def __init__(self, index):
+    self.index = index
+
   def getAction(self, gameState):
     """
       Returns the minimax action using self.depth and self.evaluationFunction
     """
     # a <= score <= b
     def recurseWithAlphaBeta(state, d, agentIndex, a, b):
-        if state.isWin() or state.isLose():
-            return (state.getScore(), None)
+        if state.gameEnded():
+            if state.getWinner() == self.index
+                return (float('inf'), None)
+            else:
+                return (float('-inf'), None)
         if d == 0 and agentIndex == self.index:
             return (self.evaluationFunction(state), None)
 
-        nextAgentIndex = (agentIndex + 1) % state.getNumAgents()
+        nextAgentIndex = (agentIndex + 1) % state.numPlayers
         legalMoves = state.getLegalActions(agentIndex)
         if len(legalMoves) == 0:
-            return (state.getScore(), None)
+            # This happens when there's a tie
+            return (0, None)
 
-        if agentIndex == self.index: # pacman
+        if agentIndex == self.index: # this agent
             bestScore = float('-inf')
             bestActions = []
             for action in legalMoves:
@@ -56,7 +64,7 @@ class MinimaxAgent(Agent):
                 if a > b:
                     break
             return (bestScore, random.choice(bestActions))
-        else: # ghost, doesn't need to return an action
+        else: # all other agents
             worstScore = float('inf')
             for action in legalMoves:
                 nextState = state.generateSuccessor(agentIndex, action)
@@ -70,6 +78,9 @@ class MinimaxAgent(Agent):
         
     score, action = recurseWithAlphaBeta(gameState, self.depth, self.index, float('-inf'), float('inf'))
     return action
+
+    def evaluationFunction(self, state):
+        return 0
 
 
 class RandomAgent(Agent):
