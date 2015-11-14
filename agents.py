@@ -20,6 +20,58 @@ class Agent:
     """
     raiseNotDefined()
 
+class MinimaxAgent(Agent):
+  """
+    Your minimax agent with alpha-beta pruning (problem 2)
+  """
+
+  def getAction(self, gameState):
+    """
+      Returns the minimax action using self.depth and self.evaluationFunction
+    """
+    # a <= score <= b
+    def recurseWithAlphaBeta(state, d, agentIndex, a, b):
+        if state.isWin() or state.isLose():
+            return (state.getScore(), None)
+        if d == 0 and agentIndex == self.index:
+            return (self.evaluationFunction(state), None)
+
+        nextAgentIndex = (agentIndex + 1) % state.getNumAgents()
+        legalMoves = state.getLegalActions(agentIndex)
+        if len(legalMoves) == 0:
+            return (state.getScore(), None)
+
+        if agentIndex == self.index: # pacman
+            bestScore = float('-inf')
+            bestActions = []
+            for action in legalMoves:
+                nextState = state.generateSuccessor(agentIndex, action)
+                score, _ = recurseWithAlphaBeta(nextState, d - 1, nextAgentIndex, a, b)
+                if score > bestScore:
+                    bestScore = score
+                    bestActions = [action]
+                elif score == bestScore:
+                    bestActions.append(action)
+                a = max(a, bestScore)
+                if a > b:
+                    break
+            return (bestScore, random.choice(bestActions))
+        else: # ghost, doesn't need to return an action
+            worstScore = float('inf')
+            for action in legalMoves:
+                nextState = state.generateSuccessor(agentIndex, action)
+                score, _ = recurseWithAlphaBeta(nextState, d, nextAgentIndex, a, b)
+                if score < worstScore:
+                    worstScore = score
+                b = min(b, worstScore)
+                if b < a:
+                    break
+            return (worstScore, None)
+        
+    score, action = recurseWithAlphaBeta(gameState, self.depth, self.index, float('-inf'), float('inf'))
+    return action
+
+
 class RandomAgent(Agent):
 	def __init__(self, index):
 		self.index = index
