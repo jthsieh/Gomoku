@@ -12,7 +12,6 @@ class Agent:
   """
   def __init__(self, index=0):
     self.index = index
-    self.depth = 4
 
   def getAction(self, state):
     """
@@ -28,6 +27,7 @@ class MinimaxAgent(Agent):
 
   def __init__(self, index):
     self.index = index
+    self.depth = 2
 
   def getAction(self, gameState):
     """
@@ -36,7 +36,7 @@ class MinimaxAgent(Agent):
     # a <= score <= b
     def recurseWithAlphaBeta(state, d, agentIndex, a, b):
         if state.gameEnded():
-            if state.getWinner() == self.index
+            if state.getWinner() == self.index:
                 return (float('inf'), None)
             else:
                 return (float('-inf'), None)
@@ -44,7 +44,7 @@ class MinimaxAgent(Agent):
             return (self.evaluationFunction(state), None)
 
         nextAgentIndex = (agentIndex + 1) % state.numPlayers
-        legalMoves = state.getLegalActions(agentIndex)
+        legalMoves = state.getLegalActions()
         if len(legalMoves) == 0:
             # This happens when there's a tie
             return (0, None)
@@ -79,8 +79,8 @@ class MinimaxAgent(Agent):
     score, action = recurseWithAlphaBeta(gameState, self.depth, self.index, float('-inf'), float('inf'))
     return action
 
-    def evaluationFunction(self, state):
-        return 0
+  def evaluationFunction(self, state):
+      return 0
 
 
 class RandomAgent(Agent):

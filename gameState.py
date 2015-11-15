@@ -29,7 +29,7 @@ class GameState():
         for y in range(self.boardSize):
             for x in range(self.boardSize):
                 if (x, y) not in self.board:
-                    legalActions.append(x,y)
+                    legalActions.append((x,y))
         return legalActions
 
     def gameEnded(self):

@@ -1,11 +1,9 @@
 import random
 import os
 import sys
-from gameState import GameState
-from agents import Agent
-from agents import RandomAgent
-from agents import HumanAgent
-from util import isInt
+from gameState import *
+from agents import *
+from util import *
 
 <<<<<<< HEAD
 #function createBoard:
@@ -141,7 +139,7 @@ class Game:
 			human = HumanAgent(len(self.agents))
 			self.agents.append(human)
 		for j in range(numComputerAgents):
-			computer = RandomAgent(len(self.agents))
+			computer = MinimaxAgent(len(self.agents))
 			self.agents.append(computer)
 
 		#TODO: Allow the user to play another game after completing one game
