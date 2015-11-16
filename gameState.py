@@ -29,7 +29,7 @@ class GameState():
             self.board = dict(prevState.board)
             self.gameOver = prevState.gameOver
             self.winner = prevState.winner
-            self.features = prevState.features
+            self.features = dict(prevState.features)
 
     def getLegalActions(self):
         legalActions = []
@@ -85,8 +85,6 @@ class GameState():
         self.updateFeaturesForMove(player, move)
         if self.checkTie():
             self.gameOver = True
-        print str(self)
-        print self.features
 
     def __str__(self):
         s = ''
@@ -173,7 +171,6 @@ class GameState():
         if neighbors1[1] == 0 and neighbors2[1] == 0:
             return
 
-        print neighbors1, neighbors2
         # Delete/Update the features of the neighbors
         for neighbor in [neighbors1, neighbors2]:
             num = neighbor[1]

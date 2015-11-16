@@ -19,7 +19,7 @@ def addItemToDict(d, item):
 # d is a dict of (item => number of item) pairs
 # It is an error if d does not contain item
 def deleteItemFromDict(d, item):
-    assert (item in d), 'Dictionary does not contain the item(' + str(item) + ') to be deleted.'
+    assert (item in d), 'Dictionary ' + str(d) + '  does not contain the item(' + str(item) + ') to be deleted.'
     if d[item] > 1:
         d[item] -= 1
     else:
