@@ -6,14 +6,19 @@ class GameState():
     Normally it is 5 in a row. We extend the game to N in a row.
 
     Parameter:
-         N:         N in a row.
-         boardSize: the board will be boardSize x boardSize
-         numPlayers: How many total players in this game (including computers)
+        N:          N in a row
+        boardSize:  The board will be boardSize x boardSize
+        numPlayers: How many total players in this game (including computers)
 
-    There are N players.
-
-    Features: (agentIndex, description) => number
-    Ex. (agentIndex, 'open 3') => 2
+    Instance variables:
+        N:          N in a row
+        boardSize:  The board will be boardSize x boardSize
+        numPlayers: How many total players in this game (including computers)
+        gameOver:   Whether the game is over
+        winner:     The index of the agent who wins, -1 if the game is not over
+        features:   Dictionary of (agentIndex, description) => number
+                    Ex. (agentIndex, 'open 3') => 2
+                        (agentIndex, 'blocked 4') => 1
     """
 
     def __init__(self, N, boardSize, numPlayers, prevState = None):
@@ -22,16 +27,22 @@ class GameState():
         self.numPlayers = numPlayers
         if prevState == None:
             self.board = {}
+#            self.currentBounds = (float('inf'), float('-inf'), float('inf'), float('-inf'))
             self.gameOver = False
             self.winner = -1
             self.features = {} # Ex. (agentIndex, 'open 3') -> 2
         else:
             self.board = dict(prevState.board)
+#            self.currentBounds = prevState.currentBounds
             self.gameOver = prevState.gameOver
             self.winner = prevState.winner
             self.features = dict(prevState.features)
 
     def getLegalActions(self):
+        """
+        If there are no pieces on the board, legal action is the middle of the board.
+        Otherwise, the legal actions are the positions within the square that encloses the current pieces.
+        """
         legalActions = []
         for y in range(self.boardSize):
             for x in range(self.boardSize):
@@ -60,9 +71,11 @@ class GameState():
         """
 
         if playerIndex < 0 or playerIndex >= self.numPlayers:
+            print "Agent index is invalid."
             return False
         # Out of bounds or that position already has a piece
         if not self.withinBounds(move) or move in self.board:
+            print "Move is invalid."
             return False
         return True
 
