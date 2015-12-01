@@ -25,9 +25,12 @@ class MinimaxAgent(Agent):
       Your minimax agent with alpha-beta pruning (problem 2)
     """
 
+    WINNING_SCORE = 100000 # a very big number
+
     def __init__(self, index):
         self.index = index
         self.depth = 2
+        self.discount = 0.95
 
     def getAction(self, gameState):
         """
@@ -37,9 +40,9 @@ class MinimaxAgent(Agent):
         def recurseWithAlphaBeta(state, d, agentIndex, a, b):
             if state.gameEnded():
                 if state.getWinner() == self.index:
-                    return (float('inf'), None)
+                    return (self.WINNING_SCORE, None)
                 else:
-                    return (float('-inf'), None)
+                    return (-self.WINNING_SCORE, None)
             if d == 0 and agentIndex == self.index:
                 return (self.evaluationFunction(state), None)
 
@@ -55,6 +58,7 @@ class MinimaxAgent(Agent):
                 for action in legalMoves:
                     nextState = state.generateSuccessor(agentIndex, action)
                     score, _ = recurseWithAlphaBeta(nextState, d - 1, nextAgentIndex, a, b)
+                    score *= self.discount # Add discount
                     if score > bestScore:
                         bestScore = score
                         bestActions = [action]
@@ -69,6 +73,7 @@ class MinimaxAgent(Agent):
                 for action in legalMoves:
                     nextState = state.generateSuccessor(agentIndex, action)
                     score, _ = recurseWithAlphaBeta(nextState, d, nextAgentIndex, a, b)
+                    score *= self.discount
                     if score < worstScore:
                         worstScore = score
                     b = min(b, worstScore)
@@ -81,7 +86,7 @@ class MinimaxAgent(Agent):
 
 
     def evaluationFunction(self, state):
-        weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': float('inf')}
+        weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 2}
         score = 0
         for feature in state.features:
             # feature is a (player, description) pair
