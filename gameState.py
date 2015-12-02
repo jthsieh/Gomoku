@@ -116,14 +116,24 @@ class GameState():
             self.gameOver = True
 
     def __str__(self):
-        s = ''
+        s = '   |'
+        for i in range(self.boardSize):
+            if i < 10:
+                s += ' ' + str(i) + ' |'
+            else:
+                s += ' ' + str(i) + '|'
+        s += "\n" + (4 * (self.boardSize + 1) * "-") +'\n'
         for y in range(self.boardSize):
+            if y < 10:
+                s += '  ' + str(y) + '|'
+            else:
+                s += ' ' + str(y) + '|'
             for x in range(self.boardSize):
                 if (x, y) not in self.board:
                     s += '   |'
                 else:
                     s += ' ' + str(self.board[(x,y)]) + ' |'
-            s += "\n" + (4 * self.boardSize * "-") +'\n'
+            s += "\n" + (4 * (self.boardSize + 1) * "-") +'\n'
         return s
 
 
