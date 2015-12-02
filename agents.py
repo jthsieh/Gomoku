@@ -48,6 +48,7 @@ class MinimaxAgent(Agent):
 
             nextAgentIndex = (agentIndex + 1) % state.numPlayers
             legalMoves = state.getLegalActions()
+            random.shuffle(legalMoves)
             if len(legalMoves) == 0:
                 # This happens when there's a tie
                 return (0, None)
@@ -82,6 +83,7 @@ class MinimaxAgent(Agent):
                 return (worstScore, None)
             
         score, action = recurseWithAlphaBeta(gameState, self.depth, self.index, float('-inf'), float('inf'))
+        print score
         return action
 
 

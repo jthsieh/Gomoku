@@ -53,7 +53,7 @@ class Game:
 		# numHumanAgents - Number of human players in this game (default: 1)
 	def repl(self, args):
 		#Defaults
-		gridSize = 5
+		gridSize = 19
 		nInARow = 5
 		numComputerAgents = 1
 		numHumanAgents = 1
