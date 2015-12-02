@@ -26,11 +26,12 @@ class MinimaxAgent(Agent):
     """
 
     WINNING_SCORE = 100000 # a very big number
+    BRANCHING_FACTOR = 15 # limit the branching factor to this number
 
     def __init__(self, index):
         self.index = index
         self.depth = 2
-        self.discount = 0.95
+        self.discount = 1
 
     def getAction(self, gameState):
         """
@@ -48,16 +49,17 @@ class MinimaxAgent(Agent):
 
             nextAgentIndex = (agentIndex + 1) % state.numPlayers
             legalMoves = state.getLegalActions()
-            random.shuffle(legalMoves)
             if len(legalMoves) == 0:
                 # This happens when there's a tie
                 return (0, None)
 
+            # evaluate and sort legal actions
+            prunedLegalMoves = self.selectActions(state, legalMoves, agentIndex)
+
             if agentIndex == self.index: # this agent
                 bestScore = float('-inf')
                 bestActions = []
-                for action in legalMoves:
-                    nextState = state.generateSuccessor(agentIndex, action)
+                for _, action, nextState  in prunedLegalMoves:
                     score, _ = recurseWithAlphaBeta(nextState, d - 1, nextAgentIndex, a, b)
                     score *= self.discount # Add discount
                     if score > bestScore:
@@ -68,11 +70,11 @@ class MinimaxAgent(Agent):
                     a = max(a, bestScore)
                     if a > b:
                         break
+#                print 'Depth: ' + str(d) + ', Agent: ' + str(agentIndex) + ', Actions: ' + str(bestActions) + ', Score: ' + str(bestScore)
                 return (bestScore, random.choice(bestActions))
             else: # all other agents
                 worstScore = float('inf')
-                for action in legalMoves:
-                    nextState = state.generateSuccessor(agentIndex, action)
+                for _, action, nextState  in prunedLegalMoves:
                     score, _ = recurseWithAlphaBeta(nextState, d, nextAgentIndex, a, b)
                     score *= self.discount
                     if score < worstScore:
@@ -86,9 +88,21 @@ class MinimaxAgent(Agent):
         print score
         return action
 
+    def selectActions(self, state, legalMoves, agentIndex):
+        estimates = [] # estimates of the next state
+        for action in legalMoves:
+            nextState = state.generateSuccessor(agentIndex, action)
+            estimates.append((self.evaluationFunction(nextState), action, nextState))
+        if agentIndex == self.index:
+            # Max agent
+            estimates.sort(key = lambda x: -x[0])
+        else:
+            # Min agent
+            estimates.sort(key = lambda x: x[0])
+        return estimates[:self.BRANCHING_FACTOR]
 
     def evaluationFunction(self, state):
-        weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 2}
+        weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 5}
         score = 0
         for feature in state.features:
             # feature is a (player, description) pair
