@@ -53,10 +53,12 @@ class Game:
 		# numHumanAgents - Number of human players in this game (default: 1)
 	def repl(self, args):
 		#Defaults
+		numArgs = 5
 		gridSize = 19
 		nInARow = 5
 		numComputerAgents = 1
 		numHumanAgents = 1
+		numberOfGames = 1
 
 		argumentsString = '''
 		============================================
@@ -69,10 +71,12 @@ class Game:
 		'''
 
 		#Parse arguments
-		if len(args) > 4:
+		if len(args) > numArgs:
 			print "\nDid not enter valid arguments!"
 			print argumentsString
 			return
+		if len(args) > 4 and isInt(args[4]):
+			numberOfGames = int(args[4])
 		if len(args) > 3 and isInt(args[3]):
 			numHumanAgents = int(args[3])
 		if len(args) > 2 and isInt(args[2]):
@@ -97,9 +101,8 @@ class Game:
 			self.agents.append(computer)
 
 		#TODO: Allow the user to play another game after completing one game
-		while True:
+		for i in range(numberOfGames):
 			self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents)
-			break
 
 if __name__ == '__main__':
 	args = sys.argv[1:] # Get game components based on input
