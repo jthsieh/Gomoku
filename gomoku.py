@@ -12,9 +12,10 @@ class Game:
 		self.moveHistory = []
 
 	#Runs a full game until completion
-	def runGames(self, gridSize, nInARow, numComputerAgents, numHumanAgents):
+	def runGames(self, gridSize, nInARow, numComputerAgents, numHumanAgents, verboseFlag):
 		self.state = GameState(nInARow, gridSize, numComputerAgents + numHumanAgents)
-		print self.state
+		if verboseFlag:
+			print self.state
 
 		agentIndex = 0
 
@@ -26,7 +27,8 @@ class Game:
 			self.moveHistory.append(action)
 			self.state = self.state.generateSuccessor(agentIndex, action)
 
-			print self.state
+			if verboseFlag:
+				print self.state
 
 			# self.state.makeMove(agentIndex, action)
 			agentIndex = (agentIndex + 1) % len(self.agents)
@@ -51,14 +53,16 @@ class Game:
 		# nInARow - Int representing the number of pieces in a row to win (default: 5)
 		# numComputerAgents - Number of AI agents the user will play against (default: 1)
 		# numHumanAgents - Number of human players in this game (default: 1)
+		# verboseFlag - Print boards (default: False)
 	def repl(self, args):
 		#Defaults
-		numArgs = 5
+		numArgs = 6
 		gridSize = 19
 		nInARow = 5
 		numComputerAgents = 1
 		numHumanAgents = 1
 		numberOfGames = 1
+		verbose = False
 
 		argumentsString = '''
 		============================================
@@ -75,6 +79,9 @@ class Game:
 			print "\nDid not enter valid arguments!"
 			print argumentsString
 			return
+		if len(args) > 5:
+			if args[5] == "verbose" or args[5] == "v" or args[5] == "Verbose":
+				verbose = True
 		if len(args) > 4 and isInt(args[4]):
 			numberOfGames = int(args[4])
 		if len(args) > 3 and isInt(args[3]):
@@ -102,7 +109,7 @@ class Game:
 
 		#TODO: Allow the user to play another game after completing one game
 		for i in range(numberOfGames):
-			self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents)
+			self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
 
 if __name__ == '__main__':
 	args = sys.argv[1:] # Get game components based on input
