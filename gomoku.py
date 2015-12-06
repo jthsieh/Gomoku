@@ -53,7 +53,7 @@ class Game:
 		# nInARow - Int representing the number of pieces in a row to win (default: 5)
 		# numComputerAgents - Number of AI agents the user will play against (default: 1)
 		# numHumanAgents - Number of human players in this game (default: 1)
-		# verboseFlag - Print boards (default: False)
+		# verboseFlag - Print boards for each turn and other turn data (default: False)
 	def repl(self, args):
 		#Defaults
 		numArgs = 6
@@ -104,7 +104,7 @@ class Game:
 			human = HumanAgent(len(self.agents))
 			self.agents.append(human)
 		for j in range(numComputerAgents):
-			computer = MinimaxAgent(len(self.agents))
+			computer = MinimaxAgent(len(self.agents), verbose)
 			self.agents.append(computer)
 
 		#TODO: Allow the user to play another game after completing one game

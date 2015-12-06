@@ -28,10 +28,11 @@ class MinimaxAgent(Agent):
     WINNING_SCORE = 100000 # a very big number
     BRANCHING_FACTOR = 15 # limit the branching factor to this number
 
-    def __init__(self, index, depth = 3):
+    def __init__(self, index, verbose, depth = 3):
         self.index = index
         self.depth = depth
         self.discount = 1
+        self.verbose = verbose
 
     def getAction(self, gameState):
         """
@@ -85,7 +86,8 @@ class MinimaxAgent(Agent):
                 return (worstScore, None)
             
         score, action = recurseWithAlphaBeta(gameState, self.depth, self.index, float('-inf'), float('inf'))
-        print score
+        if self.verbose:
+            print score
         return action
 
     def selectActions(self, state, legalMoves, agentIndex):
@@ -118,8 +120,9 @@ class MinimaxAgent(Agent):
 
 
 class RandomAgent(Agent):
-    def __init__(self, index):
+    def __init__(self, index, verbose):
         self.index = index
+        self.verbose = verbose
 
     def getAction(self, state):
         xAxis = range(state.boardSize)
@@ -131,13 +134,13 @@ class RandomAgent(Agent):
             for y in yAxis:
                 move = (x,y)
                 if state.moveIsValid(self.index, move):
-                    print "Player " + str(self.index) + " has moved at " + str(move)
+                    if self.verbose:
+                        print "Player " + str(self.index) + " has moved at " + str(move)
                     return move
 
 class HumanAgent(Agent):
     def __init__(self, index):
         self.index = index
-
     def getAction(self, state):
         player = self.index
         while True:
