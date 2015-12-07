@@ -34,7 +34,9 @@ class MinimaxAgent(Agent):
         self.branchingFactor = branchingFactor
         self.hardCodedWeights = hardCodedWeights
 
-        self.weights = {}
+        f = open('weightVector.p', 'rb')
+        self.weights = pickle.load(f)
+        f.close()
         self.discount = 1
         self.verbose = verbose
 
@@ -143,6 +145,7 @@ class MinimaxAgent(Agent):
 
     def updateWeights(self, weights):
         self.weights = dict(weights)
+
 
 class RandomAgent(Agent):
     def __init__(self, index, verbose):

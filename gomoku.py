@@ -47,8 +47,11 @@ class Game:
 				self.state = self.state.generateSuccessor(agentIndex, action)
 				sPrime = self.state
 
-				if sPrime.getWinner() == agentIndex:
-					reward = 100000
+                if sPrime.gameEnded():
+                    if sPrime.getWinner() == agentIndex:
+                        reward = 100000
+                    else:
+                        reward = - 100000
 
 				sars = (s, action, reward, sPrime)
 
