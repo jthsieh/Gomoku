@@ -132,10 +132,23 @@ class Game:
 			computer = MinimaxAgent(len(self.agents), verbose)
 			self.agents.append(computer)
 
+		numMoves = 0
+		avgMoveTime = {agent:0 for agent in range(numComputerAgents + numHumanAgents)}
+
 		#TODO: Allow the user to play another game after completing one game
 		for i in range(numberOfGames):
 			gameStats = self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
 			print gameStats
+
+			numMoves += gameStats["numMoves"]
+			for agent in gameStats["avgMoveTime"]:
+				avgMoveTime[agent] += gameStats["avgMoveTime"][agent]/numberOfGames
+
+		#Final Statistics
+		print "================= Final statistics ==================="
+		print "Total moves in game: " + str(numMoves)
+
+		print "Average Time Per Move For Each Player: " + str(avgMoveTime)
 
 if __name__ == '__main__':
 	args = sys.argv[1:] # Get game components based on input

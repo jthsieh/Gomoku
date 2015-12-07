@@ -28,7 +28,7 @@ class MinimaxAgent(Agent):
     WINNING_SCORE = 100000 # a very big number
     BRANCHING_FACTOR = 15 # limit the branching factor to this number
 
-    def __init__(self, index, verbose, depth = 3):
+    def __init__(self, index, verbose, depth = 2):
         self.index = index
         self.depth = depth
         self.discount = 1
