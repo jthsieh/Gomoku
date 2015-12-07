@@ -31,12 +31,14 @@ class GameState():
         self.numPlayers = numPlayers
         if prevState == None:
             self.board = {}
+            self.currentPlayer = 0
             self.currentBounds = (float('inf'), float('-inf'), float('inf'), float('-inf'))
             self.gameOver = False
             self.winner = -1
             self.features = {}
         else:
             self.board = dict(prevState.board)
+            self.currentPlayer = prevState.currentPlayer
             self.currentBounds = prevState.currentBounds
             self.gameOver = prevState.gameOver
             self.winner = prevState.winner
@@ -113,6 +115,9 @@ class GameState():
         self.updateFeaturesForMove(player, move)
         if self.checkTie():
             self.gameOver = True
+
+        self.currentPlayer = (self.currentPlayer + 1) % self.numPlayers
+
 
     def __str__(self):
         s = '   |'
