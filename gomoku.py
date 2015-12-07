@@ -1,6 +1,7 @@
 import random
 import os
 import sys
+import time
 from gameState import *
 from agents import *
 from util import *
@@ -11,26 +12,40 @@ class Game:
 		self.agents = []
 		self.moveHistory = []
 
-	#Runs a full game until completion
+	# Runs a full game until completion
+	# Returns a map of statistics, where the keys are:
+	# numMoves (int) - the number of moves played by all players
+	# avgMoveTime (float) - average time in seconds per move for each player
 	def runGames(self, gridSize, nInARow, numComputerAgents, numHumanAgents, verboseFlag):
+		#Collect statistics on the game
+		stats = {}
+		numberOfMoves = 0
+
 		self.state = GameState(nInARow, gridSize, numComputerAgents + numHumanAgents)
 		if verboseFlag:
 			print self.state
 
 		agentIndex = 0
-
+		agentTimeTaken = {}
 		while not self.state.gameEnded():
+			# Set agent time taken to 0 if this is the first move
+			if not agentIndex in agentTimeTaken:
+				agentTimeTaken[agentIndex] = 0
+
+			turnStartTime = time.clock()
+
 			agent = self.agents[agentIndex]
-			
 			action = agent.getAction(self.state)
 
-			self.moveHistory.append(action)
+			self.moveHistory.append((agentIndex, action))
+			numberOfMoves += 1
+			turnEndTime = time.clock()
 			self.state = self.state.generateSuccessor(agentIndex, action)
 
 			if verboseFlag:
 				print self.state
 
-			# self.state.makeMove(agentIndex, action)
+			agentTimeTaken[agentIndex] += turnEndTime - turnStartTime
 			agentIndex = (agentIndex + 1) % len(self.agents)
 
 		print "Game has ended!"
@@ -39,7 +54,17 @@ class Game:
 		else:
 			print "Player " + str(self.state.getWinner()) + " won the game!"
 				
-		return 0
+		numberOfMovesPerPlayer = numberOfMoves / len(self.agents) #Integer truncation
+		lastPlayer = numberOfMoves % len(self.agents)
+		def oneMoreMove(agentIndex, lastPlayer): #Add the last move if the player did move. Needed for average time
+			if agentIndex <= lastPlayer:
+				return 1
+			return 0
+
+		stats["numMoves"] = numberOfMoves
+		stats["avgMoveTime"] = dict((agent, agentTimeTaken[agent]/numberOfMovesPerPlayer + oneMoreMove(agent, lastPlayer)) for agent in agentTimeTaken)
+		# stats["moveHistory"] = self.moveHistory
+		return stats
 
 
 
@@ -109,7 +134,8 @@ class Game:
 
 		#TODO: Allow the user to play another game after completing one game
 		for i in range(numberOfGames):
-			self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
+			gameStats = self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
+			print gameStats
 
 if __name__ == '__main__':
 	args = sys.argv[1:] # Get game components based on input
