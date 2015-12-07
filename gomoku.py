@@ -150,6 +150,7 @@ class Game:
 
 		#Final Statistics
 		print "================= Final statistics ==================="
+		print "Number of games: " + str(numberOfGames)
 		print "Average Total moves in game: " + str(numMoves/numberOfGames)
 		print "Average Time Per Move For Each Player: " + str(avgMoveTime)
 		print "Wins For Each Player: " + str(wins)
