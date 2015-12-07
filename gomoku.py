@@ -80,9 +80,10 @@ class Game:
 		# numComputerAgents - Number of AI agents the user will play against (default: 1)
 		# numHumanAgents - Number of human players in this game (default: 1)
 		# verboseFlag - Print boards for each turn and other turn data (default: False)
+		# agentTypes - a string of structure 'mrmm', where each letter defines the AI agent type. m - Minimax. r - random
 	def repl(self, args):
 		#Defaults
-		numArgs = 6
+		numArgs = 7
 		gridSize = 19
 		nInARow = 5
 		numComputerAgents = 1
@@ -98,6 +99,8 @@ class Game:
 		nInARow - Int representing the number of pieces in a row to win (default: 5)
 		numComputerAgents - Number of AI agents the user will play against (default: 1)
 		numHumanAgents - Number of human players in this game (default: 1)
+		verboseFlag - Print boards for each turn and other turn data (default: False)
+		agentTypes - a string of structure 'mrmm', where each letter defines the AI agent type. m - Minimax. r - random
 		'''
 
 		#Parse arguments
@@ -118,6 +121,29 @@ class Game:
 			nInARow = int(args[1])
 		if len(args) >= 1 and isInt(args[0]):
 			gridSize = int(args[0])
+		if len(args) > 6: #Parse what kind of agents
+			print args[6]
+			if numComputerAgents != len(args[6]):
+				print "\nDid not enter valid arguments!"
+				print argumentsString
+				return
+			for i in range(numComputerAgents):
+				queryString = args[6]
+				agentType = None
+				if queryString[i] == "m":
+					agentType = MinimaxAgent(len(self.agents), verbose)
+				elif queryString[i] == "r":
+					agentType = RandomAgent(len(self.agents), verbose)
+				else:
+					print "\nDid not enter valid arguments! Invalid agent types"
+					print argumentsString
+					return
+				self.agents.append(agentType)
+		else: #Setup computer agents (default)
+			for j in range(numComputerAgents):
+				computer = RandomAgent(len(self.agents), verbose)
+				print computer.index
+				self.agents.append(computer)
 
 		print('Welcome to our Gomoku game for CS221')
 		print "Grid Size: " + str(gridSize)
@@ -125,13 +151,10 @@ class Game:
 		print "Computers: " + str(numComputerAgents)
 		print "Humans: " + str(numHumanAgents) + "\n"
 
-		#Setup agents
+		#Setup Human agents
 		for i in range(numHumanAgents):
 			human = HumanAgent(len(self.agents))
 			self.agents.append(human)
-		for j in range(numComputerAgents):
-			computer = MinimaxAgent(len(self.agents), verbose)
-			self.agents.append(computer)
 
 		numMoves = 0
 		avgMoveTime = {agent:0 for agent in range(numComputerAgents + numHumanAgents)}

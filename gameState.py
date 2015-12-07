@@ -83,7 +83,6 @@ class GameState():
             return False
         # Out of bounds or that position already has a piece
         if not self.withinBounds(move) or move in self.board:
-            print "Move is invalid."
             return False
         return True
 

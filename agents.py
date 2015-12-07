@@ -158,4 +158,5 @@ class HumanAgent(Agent):
             if state.moveIsValid(player, coordinates):
                 return coordinates
             else:
+                print "Move is invalid."
                 continue
