@@ -1,61 +1,127 @@
 (dp0
-S'closed 5'
+(S'open 3'
 p1
-I0
-sS'blocked 3'
-p2
-I0
-sS'blocked 2'
-p3
-I0
-sS'blocked 4'
-p4
-I0
-s(I1
-S'open 2'
-p5
-tp6
-F300000.0
-s(I1
-S'open 3'
-p7
-tp8
+I1
+I01
+tp2
 F0.0
-sS'open 4'
-p9
-I0
-sS'open 5'
-p10
-I0
-sS'open 2'
-p11
-I0
-sS'open 3'
-p12
-I0
-s(I0
-S'open 2'
-p13
+s(S'open 2'
+p3
+I5
+I00
+tp4
+F50000.0
+s(g1
+I1
+I00
+tp5
+F0.0
+s(S'blocked 4'
+p6
+I2
+I00
+tp7
+F0.0
+s(S'blocked 2'
+p8
+I3
+I01
+tp9
+F0.0
+s(g8
+I4
+I01
+tp10
+F0.0
+s(g3
+I1
+I00
+tp11
+F0.0
+s(g3
+I1
+I01
+tp12
+F0.0
+s(g6
+I1
+I01
+tp13
+F0.0
+s(g6
+I1
+I00
 tp14
-F100000.0
-s(I1
-S'blocked 2'
-p15
+F0.0
+s(g8
+I2
+I00
+tp15
+F0.0
+s(g3
+I2
+I01
 tp16
 F0.0
-s(I1
-S'open 4'
-p17
+s(g8
+I2
+I01
+tp17
+F0.0
+s(g3
+I2
+I00
 tp18
 F0.0
-s(I0
-S'blocked 2'
-p19
+s(g8
+I4
+I00
+tp19
+F0.0
+s(g8
+I6
+I00
 tp20
 F0.0
-s(I1
-S'open 5'
-p21
+s(g8
+I5
+I01
+tp21
+F50000.0
+s(g8
+I6
+I01
 tp22
 F0.0
+s(S'blocked 3'
+p23
+I1
+I00
+tp24
+F0.0
+s(g8
+I5
+I00
+tp25
+F0.0
+s(g23
+I1
+I01
+tp26
+F0.0
+s(g3
+I3
+I00
+tp27
+F0.0
+s(g3
+I3
+I01
+tp28
+F0.0
+s(g6
+I2
+I01
+tp29
+F50000.0
 s.

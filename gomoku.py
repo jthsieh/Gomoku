@@ -14,28 +14,26 @@ class Game:
 		self.moveHistory = []
 
 	def dotProduct(self, d1, d2):
-	    """
-	    FROM CS 221 SENTIMENT CODE
-	    @param dict d1: a feature vector represented by a mapping from a feature (string) to a weight (float).
-	    @param dict d2: same as d1
-	    @return float: the dot product between d1 and d2
-	    """
-	    if len(d1) < len(d2):
-	        return self.dotProduct(d2, d1)
-	    else:
-	        return sum(d1.get(f, 0) * v for f, v in d2.items())
+		"""
+		FROM CS 221 SENTIMENT CODE
+		@param dict d1: a feature vector represented by a mapping from a feature (string) to a weight (float).
+		@param dict d2: same as d1
+		@return float: the dot product between d1 and d2
+		"""
+		if len(d1) < len(d2):
+			return self.dotProduct(d2, d1)
+		else:
+			return sum(d1.get(f, 0) * v for f, v in d2.items())
 
-	def learnWeights(self, gridSize, nInARow, numComputerAgents, numHumanAgents, verboseFlag, learningAgentIndex):
+	def learnWeights(self, gridSize, nInARow, numComputerAgents, numHumanAgents, verboseFlag, learningAgentIndex, numberOfGames):
 		self.state = GameState(nInARow, gridSize, numComputerAgents + numHumanAgents)
 
 		weightVector = None
 		try:
-		    with open( "weightVector.p", "rb" ) as f:
-		        weightVector = pickle.load(f)
+			with open( "weightVector.p", "rb" ) as f:
+				weightVector = pickle.load(f)
 		except IOError:
 			weightVector = {}
-
-		numberOfGames = 100
 
 		for gameNum in range(numberOfGames):
 			agentIndex = 0
@@ -49,7 +47,7 @@ class Game:
 				self.state = self.state.generateSuccessor(agentIndex, action)
 				sPrime = self.state
 
-				if self.state.getWinner() == agentIndex:
+				if sPrime.getWinner() == agentIndex:
 					reward = 100000
 
 				sars = (s, action, reward, sPrime)
@@ -58,18 +56,27 @@ class Game:
 					gamma = 1.0
 					step = 0.5
 					(state, action, reward, successorState) = sars
-					for key in state.features.keys() + successorState.features.keys():
+
+					stateNewFeatures = state.getFeatures(agentIndex)
+					successorStateNewFeatures = successorState.getFeatures(agentIndex)
+
+					stateFeatureVector = {key:1 for key in stateNewFeatures}
+					successorStateFeatureVector = {key:1 for key in successorStateNewFeatures}
+					print "StateFeatureVector: ", stateFeatureVector
+					print "successorStateFeatureVector: ", successorStateFeatureVector
+
+					for key in stateFeatureVector.keys():
 						if not key in weightVector:
 							weightVector[key] = 0
-						if not key in state.features:
-							state.features[key] = 0
-						if not key in successorState.features:
-							state.features[key] = 0
-						weightVector[key] = weightVector[key] - step * (self.dotProduct(weightVector, state.features)-(reward + gamma * self.dotProduct(successorState.features, weightVector))) * state.features[key]
-
+						if not key in stateNewFeatures:
+							stateFeatureVector[key] = 0
+						if not key in successorStateNewFeatures:
+							successorStateFeatureVector[key] = 0
+							
+						weightVector[key] = weightVector[key] - step * (self.dotProduct(weightVector, stateFeatureVector)-(reward + gamma * self.dotProduct(successorStateFeatureVector, weightVector))) * stateFeatureVector[key]
+				updateWeightVector(weightVector, sars)
 				agentIndex = (agentIndex + 1) % len(self.agents)
-				if agentIndex == learningAgentIndex:
-					updateWeightVector(weightVector, sars)
+
 
 		pickle.dump(weightVector, open( "weightVector.p", "wb" ) )
 
@@ -125,7 +132,7 @@ class Game:
 
 		stats["winner"] = self.state.getWinner()
 		stats["numMoves"] = numberOfMoves
-		stats["avgMoveTime"] = dict((agent, agentTimeTaken[agent]/numberOfMovesPerPlayer + oneMoreMove(agent, lastPlayer)) for agent in agentTimeTaken)
+		stats["avgMoveTime"] = dict((agent, agentTimeTaken[agent]/(numberOfMovesPerPlayer + oneMoreMove(agent, lastPlayer))) for agent in agentTimeTaken)
 		# stats["moveHistory"] = self.moveHistory
 		return stats
 
@@ -233,7 +240,7 @@ class Game:
 		#TODO: Allow the user to play another game after completing one game
 
 		if learningMode:
-			self.learnWeights(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose, learningAgentIndex)
+			self.learnWeights(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose, learningAgentIndex, numberOfGames)
 		else:
 			for i in range(numberOfGames):
 				gameStats = self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
