@@ -80,7 +80,7 @@ class Game:
 		# numComputerAgents - Number of AI agents the user will play against (default: 1)
 		# numHumanAgents - Number of human players in this game (default: 1)
 		# numGames - Number of games to play
-		# verboseFlag - Print boards for each turn and other turn data (default: False)
+		# verboseFlag - Print boards for each turn and other turn data. "verbose" will turn this on (default: False)
 		# agentTypes - a string of structure 'mrmm', where each letter defines the AI agent type. m - Minimax. r - random
 	def repl(self, args):
 		#Defaults
@@ -101,7 +101,7 @@ class Game:
 		numComputerAgents - Number of AI agents the user will play against (default: 1)
 		numHumanAgents - Number of human players in this game (default: 1)
 		numGames - Number of games to play
-		verboseFlag - Print boards for each turn and other turn data (default: False)
+		verboseFlag - Print boards for each turn and other turn data. "verbose" will turn this on (default: False)
 		agentTypes - a string of structure 'mrmm', where each letter defines the AI agent type. m - Minimax. r - random
 		'''
 
