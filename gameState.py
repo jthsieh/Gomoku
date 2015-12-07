@@ -118,6 +118,18 @@ class GameState():
 
         self.currentPlayer = (self.currentPlayer + 1) % self.numPlayers
 
+    def getFeatures(self, index):
+        # Return the features that we need for evaluationFunction
+        # (not the features in state.features)
+        result = []
+        for feature in self.features:
+            num = self.features[feature]
+            agentIndex = feature[0]
+            description = feature[1]
+            newFeature = (description, num, index == agentIndex)
+            result.append(newFeature)
+        return result
+
 
     def __str__(self):
         s = '   |'
