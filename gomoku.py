@@ -79,7 +79,8 @@ class Game:
 		# nInARow - Int representing the number of pieces in a row to win (default: 5)
 		# numComputerAgents - Number of AI agents the user will play against (default: 1)
 		# numHumanAgents - Number of human players in this game (default: 1)
-		# verboseFlag - Print boards for each turn and other turn data (default: False)
+		# numGames - Number of games to play
+		# verboseFlag - Print boards for each turn and other turn data. "verbose" will turn this on (default: False)
 		# agentTypes - a string of structure 'mrmm', where each letter defines the AI agent type. m - Minimax. r - random
 	def repl(self, args):
 		#Defaults
@@ -99,7 +100,8 @@ class Game:
 		nInARow - Int representing the number of pieces in a row to win (default: 5)
 		numComputerAgents - Number of AI agents the user will play against (default: 1)
 		numHumanAgents - Number of human players in this game (default: 1)
-		verboseFlag - Print boards for each turn and other turn data (default: False)
+		numGames - Number of games to play
+		verboseFlag - Print boards for each turn and other turn data. "verbose" will turn this on (default: False)
 		agentTypes - a string of structure 'mrmm', where each letter defines the AI agent type. m - Minimax. r - random
 		'''
 
@@ -141,7 +143,7 @@ class Game:
 				self.agents.append(agentType)
 		else: #Setup computer agents (default)
 			for j in range(numComputerAgents):
-				computer = RandomAgent(len(self.agents), verbose)
+				computer = MinimaxAgent(len(self.agents), verbose)
 				print computer.index
 				self.agents.append(computer)
 
