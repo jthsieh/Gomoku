@@ -124,7 +124,6 @@ class MinimaxAgent(Agent):
                     score -= weights[description] * num
         return score
 
-
 class RandomAgent(Agent):
     def __init__(self, index, verbose):
         self.index = index

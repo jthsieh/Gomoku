@@ -1,6 +1,7 @@
 import random
 import os
 import sys
+import pickle
 import time
 from gameState import *
 from agents import *
@@ -11,6 +12,67 @@ class Game:
 	def __init__(self):
 		self.agents = []
 		self.moveHistory = []
+
+	def dotProduct(self, d1, d2):
+	    """
+	    FROM CS 221 SENTIMENT CODE
+	    @param dict d1: a feature vector represented by a mapping from a feature (string) to a weight (float).
+	    @param dict d2: same as d1
+	    @return float: the dot product between d1 and d2
+	    """
+	    if len(d1) < len(d2):
+	        return self.dotProduct(d2, d1)
+	    else:
+	        return sum(d1.get(f, 0) * v for f, v in d2.items())
+
+	def learnWeights(self, gridSize, nInARow, numComputerAgents, numHumanAgents, verboseFlag, learningAgentIndex):
+		self.state = GameState(nInARow, gridSize, numComputerAgents + numHumanAgents)
+
+		weightVector = None
+		try:
+		    with open( "weightVector.p", "rb" ) as f:
+		        weightVector = pickle.load(f)
+		except IOError:
+			weightVector = {}
+
+		numberOfGames = 100
+
+		for gameNum in range(numberOfGames):
+			agentIndex = 0
+			while not self.state.gameEnded():
+				s = self.state
+				reward = 0
+				agent = self.agents[agentIndex]
+				action = agent.getAction(self.state)
+
+				self.moveHistory.append((agentIndex, action))
+				self.state = self.state.generateSuccessor(agentIndex, action)
+				sPrime = self.state
+
+				if self.state.getWinner() == agentIndex:
+					reward = 100000
+
+				sars = (s, action, reward, sPrime)
+
+				def updateWeightVector(weightVector, sars):
+					gamma = 1.0
+					step = 0.5
+					(state, action, reward, successorState) = sars
+					for key in state.features.keys() + successorState.features.keys():
+						if not key in weightVector:
+							weightVector[key] = 0
+						if not key in state.features:
+							state.features[key] = 0
+						if not key in successorState.features:
+							state.features[key] = 0
+						weightVector[key] = weightVector[key] - step * (self.dotProduct(weightVector, state.features)-(reward + gamma * self.dotProduct(successorState.features, weightVector))) * state.features[key]
+
+				agentIndex = (agentIndex + 1) % len(self.agents)
+				if agentIndex == learningAgentIndex:
+					updateWeightVector(weightVector, sars)
+
+		pickle.dump(weightVector, open( "weightVector.p", "wb" ) )
+
 
 	# Runs a full game until completion
 	# Returns a map of statistics, where the keys are:
@@ -84,13 +146,15 @@ class Game:
 		# agentTypes - a string of structure 'mrmm', where each letter defines the AI agent type. m - Minimax. r - random
 	def repl(self, args):
 		#Defaults
-		numArgs = 7
+		numArgs = 8
 		gridSize = 19
 		nInARow = 5
 		numComputerAgents = 1
 		numHumanAgents = 1
 		numberOfGames = 1
 		verbose = False
+		learningAgentIndex = None
+		learningMode = False
 
 		argumentsString = '''
 		============================================
@@ -110,6 +174,9 @@ class Game:
 			print "\nDid not enter valid arguments!"
 			print argumentsString
 			return
+		if len(args) > 7 and isInt(args[7]):
+			learningAgentIndex = int(args[7])
+			learningMode = True
 		if len(args) > 5:
 			if args[5] == "verbose" or args[5] == "v" or args[5] == "Verbose":
 				verbose = True
@@ -164,21 +231,25 @@ class Game:
 		wins[-1] = 0 #Keep track of ties
 
 		#TODO: Allow the user to play another game after completing one game
-		for i in range(numberOfGames):
-			gameStats = self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
-			print gameStats
 
-			numMoves += gameStats["numMoves"]
-			wins[gameStats["winner"]] += 1
-			for agent in gameStats["avgMoveTime"]:
-				avgMoveTime[agent] += gameStats["avgMoveTime"][agent]/numberOfGames
+		if learningMode:
+			self.learnWeights(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose, learningAgentIndex)
+		else:
+			for i in range(numberOfGames):
+				gameStats = self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
+				print gameStats
 
-		#Final Statistics
-		print "================= Final statistics ==================="
-		print "Number of games: " + str(numberOfGames)
-		print "Average Total moves in game: " + str(numMoves/numberOfGames)
-		print "Average Time Per Move For Each Player: " + str(avgMoveTime)
-		print "Wins For Each Player: " + str(wins)
+				numMoves += gameStats["numMoves"]
+				wins[gameStats["winner"]] += 1
+				for agent in gameStats["avgMoveTime"]:
+					avgMoveTime[agent] += gameStats["avgMoveTime"][agent]/numberOfGames
+
+			#Final Statistics
+			print "================= Final statistics ==================="
+			print "Number of games: " + str(numberOfGames)
+			print "Average Total moves in game: " + str(numMoves/numberOfGames)
+			print "Average Time Per Move For Each Player: " + str(avgMoveTime)
+			print "Wins For Each Player: " + str(wins)
 if __name__ == '__main__':
 	args = sys.argv[1:] # Get game components based on input
 	game = Game()
