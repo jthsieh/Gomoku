@@ -32,6 +32,8 @@ class MinimaxAgent(Agent):
         self.index = index
         self.depth = depth
         self.branchingFactor = branchingFactor
+        self.hardCodedWeights = hardCodedWeights
+
         self.weights = {}
         self.discount = 1
         self.verbose = verbose
@@ -120,13 +122,23 @@ class MinimaxAgent(Agent):
                 agentIndex = feature[0]
                 description = feature[1]
                 newFeature = (description, num, self.index == agentIndex)
-                if newFeature in self.weights
+                if newFeature in self.weights:
                     score += self.weights[newFeature]
             return score
         else:
             # original implementation
             weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 5, 'open 5': self.WINNING_SCORE, 'closed 5': self.WINNING_SCORE}
-            return 0
+            score = 0
+            for feature in state.features:
+                num = state.features[feature]
+                agentIndex = feature[0]
+                description = feature[1]
+                if description in weights:
+                    if agentIndex == self.index:
+                        score += weights[description] * num
+                    else:
+                        score -= weights[description] * num
+            return score
 
 
     def updateWeights(self, weights):
