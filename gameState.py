@@ -81,7 +81,7 @@ class GameState():
         """
 
         if playerIndex < 0 or playerIndex >= self.numPlayers:
-            print "Agent index is invalid."
+            print "Agent index " + str(playerIndex) + " is invalid."
             return False
         # Out of bounds or that position already has a piece
         if not self.withinBounds(move) or move in self.board:
@@ -126,7 +126,7 @@ class GameState():
             num = self.features[feature]
             agentIndex = feature[0]
             description = feature[1]
-            newFeature = (description, num, index == agentIndex)
+            newFeature = (description, num, index == agentIndex, self.currentPlayer == index)
             result.append(newFeature)
         return result
 

@@ -1,5 +1,5 @@
 import sys
-from util import isInt
+from util import *
 import random
 import pickle
 
@@ -26,7 +26,7 @@ class MinimaxAgent(Agent):
       Your minimax agent with alpha-beta pruning 
     """
 
-    WINNING_SCORE = 1000000 # a very big number
+    WINNING_SCORE = 100000 # a very big number
 
     def __init__(self, index, verbose, depth = 2, branchingFactor = 10, hardCodedWeights = False):
         self.index = index
@@ -34,9 +34,12 @@ class MinimaxAgent(Agent):
         self.branchingFactor = branchingFactor
         self.hardCodedWeights = hardCodedWeights
 
-        f = open('weightVector.p', 'rb')
-        self.weights = pickle.load(f)
-        f.close()
+        try:
+            with open('weightVector.p', 'rb') as f:
+                self.weights = pickle.load(f)
+                f.close()
+        except IOError:
+            self.weights = {}
         self.discount = 1
         self.verbose = verbose
 
@@ -118,15 +121,9 @@ class MinimaxAgent(Agent):
     def evaluationFunction(self, state):
         if not self.hardCodedWeights:
             score = 0
-            for feature in state.features:
-                # feature is a (player, description) pair
-                num = state.features[feature]
-                agentIndex = feature[0]
-                description = feature[1]
-                newFeature = (description, num, self.index == agentIndex)
-                if newFeature in self.weights:
-                    score += self.weights[newFeature]
-            return score
+            features = state.getFeatures(self.index)
+            featureVector = {key:1 for key in features}
+            return dotProduct(featureVector, self.weights)
         else:
             # original implementation
             weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 5, 'open 5': self.WINNING_SCORE, 'closed 5': self.WINNING_SCORE}
@@ -153,18 +150,7 @@ class RandomAgent(Agent):
         self.verbose = verbose
 
     def getAction(self, state):
-        xAxis = range(state.boardSize)
-        random.shuffle(xAxis)
-
-        yAxis = range(state.boardSize)
-        random.shuffle(yAxis)
-        for x in xAxis:
-            for y in yAxis:
-                move = (x,y)
-                if state.moveIsValid(self.index, move):
-                    if self.verbose:
-                        print "Player " + str(self.index) + " has moved at " + str(move)
-                    return move
+        return random.choice(state.getLegalActions())
 
 class HumanAgent(Agent):
     def __init__(self, index):
