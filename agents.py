@@ -26,7 +26,7 @@ class MinimaxAgent(Agent):
     """
 
     WINNING_SCORE = 1000000# a very big number
-    BRANCHING_FACTOR = 15 # limit the branching factor to this number
+    BRANCHING_FACTOR = 10 # limit the branching factor to this number
 
     def __init__(self, index, verbose, depth = 2):
         self.index = index
@@ -42,17 +42,17 @@ class MinimaxAgent(Agent):
         def recurseWithAlphaBeta(state, d, agentIndex, a, b):
             if state.gameEnded():
                 if state.getWinner() == self.index:
-                    return (self.WINNING_SCORE, None)
+                    return (self.WINNING_SCORE, None, True)
                 else:
-                    return (-self.WINNING_SCORE, None)
+                    return (self.WINNING_SCORE, None, True)
             if d == 0 and agentIndex == self.index:
-                return (self.evaluationFunction(state), None)
+                return (self.evaluationFunction(state), None, False)
 
             nextAgentIndex = (agentIndex + 1) % state.numPlayers
             legalMoves = state.getLegalActions()
             if len(legalMoves) == 0:
                 # This happens when there's a tie
-                return (0, None)
+                return (0, None, False)
 
             # evaluate and sort legal actions
             prunedLegalMoves = self.selectActions(state, legalMoves, agentIndex)
@@ -61,7 +61,10 @@ class MinimaxAgent(Agent):
                 bestScore = float('-inf')
                 bestActions = []
                 for _, action, nextState  in prunedLegalMoves:
-                    score, _ = recurseWithAlphaBeta(nextState, d - 1, nextAgentIndex, a, b)
+                    score, _, gameEnding = recurseWithAlphaBeta(nextState, d - 1, nextAgentIndex, a, b)
+                    if gameEnding:
+                        return (score, action, True)
+
                     score *= self.discount # Add discount
                     if score > bestScore:
                         bestScore = score
@@ -72,20 +75,23 @@ class MinimaxAgent(Agent):
                     if a > b:
                         break
 #                print 'Depth: ' + str(d) + ', Agent: ' + str(agentIndex) + ', Actions: ' + str(bestActions) + ', Score: ' + str(bestScore)
-                return (bestScore, random.choice(bestActions))
+                return (bestScore, random.choice(bestActions), False)
             else: # all other agents
                 worstScore = float('inf')
                 for _, action, nextState  in prunedLegalMoves:
-                    score, _ = recurseWithAlphaBeta(nextState, d, nextAgentIndex, a, b)
+                    score, _, gameEnding = recurseWithAlphaBeta(nextState, d, nextAgentIndex, a, b)
+                    if gameEnding:
+                        return (score, action, True)
+
                     score *= self.discount
                     if score < worstScore:
                         worstScore = score
                     b = min(b, worstScore)
                     if b < a:
                         break
-                return (worstScore, None)
+                return (worstScore, None, False)
             
-        score, action = recurseWithAlphaBeta(gameState, self.depth, self.index, float('-inf'), float('inf'))
+        score, action, _ = recurseWithAlphaBeta(gameState, self.depth, self.index, float('-inf'), float('inf'))
         if self.verbose:
             print score
         return action
@@ -104,7 +110,7 @@ class MinimaxAgent(Agent):
         return estimates[:self.BRANCHING_FACTOR]
 
     def evaluationFunction(self, state):
-        weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 5}
+        weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 5, 'open 5': self.WINNING_SCORE, 'closed 5': self.WINNING_SCORE}
         score = 0
         for feature in state.features:
             # feature is a (player, description) pair
