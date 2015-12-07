@@ -1,6 +1,7 @@
 import sys
 from util import isInt
 import random
+import pickle
 
 #Class agent is lifted directly from the pacman code
 class Agent:
@@ -25,12 +26,13 @@ class MinimaxAgent(Agent):
       Your minimax agent with alpha-beta pruning 
     """
 
-    WINNING_SCORE = 1000000# a very big number
-    BRANCHING_FACTOR = 10 # limit the branching factor to this number
+    WINNING_SCORE = 1000000 # a very big number
 
-    def __init__(self, index, verbose, depth = 2):
+    def __init__(self, index, verbose, depth = 2, branchingFactor = 10, hardCodedWeights = False):
         self.index = index
         self.depth = depth
+        self.branchingFactor = branchingFactor
+        self.weights = {}
         self.discount = 1
         self.verbose = verbose
 
@@ -107,22 +109,28 @@ class MinimaxAgent(Agent):
         else:
             # Min agent
             estimates.sort(key = lambda x: x[0])
-        return estimates[:self.BRANCHING_FACTOR]
+        return estimates[:self.branchingFactor]
 
     def evaluationFunction(self, state):
-        weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 5, 'open 5': self.WINNING_SCORE, 'closed 5': self.WINNING_SCORE}
-        score = 0
-        for feature in state.features:
-            # feature is a (player, description) pair
-            num = state.features[feature]
-            agentIndex = feature[0]
-            description = feature[1]
-            if description in weights:
-                if agentIndex == self.index:
-                    score += weights[description] * num
-                else:
-                    score -= weights[description] * num
-        return score
+        if not self.hardCodedWeights:
+            score = 0
+            for feature in state.features:
+                # feature is a (player, description) pair
+                num = state.features[feature]
+                agentIndex = feature[0]
+                description = feature[1]
+                newFeature = (description, num, self.index == agentIndex)
+                if newFeature in self.weights
+                    score += self.weights[newFeature]
+            return score
+        else:
+            # original implementation
+            weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 5, 'open 5': self.WINNING_SCORE, 'closed 5': self.WINNING_SCORE}
+            return 0
+
+
+    def updateWeights(self, weights):
+        self.weights = dict(weights)
 
 
 class RandomAgent(Agent):
