@@ -61,6 +61,7 @@ class Game:
 				return 1
 			return 0
 
+		stats["winner"] = self.state.getWinner()
 		stats["numMoves"] = numberOfMoves
 		stats["avgMoveTime"] = dict((agent, agentTimeTaken[agent]/numberOfMovesPerPlayer + oneMoreMove(agent, lastPlayer)) for agent in agentTimeTaken)
 		# stats["moveHistory"] = self.moveHistory
@@ -134,6 +135,8 @@ class Game:
 
 		numMoves = 0
 		avgMoveTime = {agent:0 for agent in range(numComputerAgents + numHumanAgents)}
+		wins = {agent: 0 for agent in range(numComputerAgents + numHumanAgents)}
+		wins[-1] = 0 #Keep track of ties
 
 		#TODO: Allow the user to play another game after completing one game
 		for i in range(numberOfGames):
@@ -141,15 +144,15 @@ class Game:
 			print gameStats
 
 			numMoves += gameStats["numMoves"]
+			wins[gameStats["winner"]] += 1
 			for agent in gameStats["avgMoveTime"]:
 				avgMoveTime[agent] += gameStats["avgMoveTime"][agent]/numberOfGames
 
 		#Final Statistics
 		print "================= Final statistics ==================="
-		print "Total moves in game: " + str(numMoves)
-
+		print "Average Total moves in game: " + str(numMoves/numberOfGames)
 		print "Average Time Per Move For Each Player: " + str(avgMoveTime)
-
+		print "Wins For Each Player: " + str(wins)
 if __name__ == '__main__':
 	args = sys.argv[1:] # Get game components based on input
 	game = Game()
