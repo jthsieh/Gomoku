@@ -22,10 +22,10 @@ class Agent:
 
 class MinimaxAgent(Agent):
     """
-      Your minimax agent with alpha-beta pruning (problem 2)
+      Your minimax agent with alpha-beta pruning 
     """
 
-    WINNING_SCORE = 100000 # a very big number
+    WINNING_SCORE = 1000000# a very big number
     BRANCHING_FACTOR = 15 # limit the branching factor to this number
 
     def __init__(self, index, verbose, depth = 2):
