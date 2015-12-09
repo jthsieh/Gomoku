@@ -106,8 +106,8 @@ class GameState():
         x, y = move
         if move in self.legalActions:
             self.legalActions.remove(move)
-        for i in range(x - 2, x + 2 + 1):
-            for j in range(y - 2, y + 2 + 1):
+        for i in range(x - 1, x + 1 + 1):
+            for j in range(y - 1, y + 1 + 1):
                 if self.withinBounds((i, j)) and (i, j) not in self.board:
                     self.legalActions.add((i, j))
 
