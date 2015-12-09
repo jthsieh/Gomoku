@@ -53,7 +53,7 @@ class MinimaxAgent(Agent):
                 if state.getWinner() == self.index:
                     return (self.WINNING_SCORE, None)
                 else:
-                    return (self.WINNING_SCORE, None)
+                    return (- self.WINNING_SCORE, None)
             if d == 0 and agentIndex == self.index:
                 return (self.evaluationFunction(state), None)
 
@@ -80,6 +80,11 @@ class MinimaxAgent(Agent):
                     a = max(a, bestScore)
                     if a > b:
                         break
+                    ### For debug purposes
+                    #if self.verbose and d == self.depth:
+                    #    print 'Action: ', action
+                    #    print 'Score: ', score
+                    #    print '----------------------------'
                 return (bestScore, random.choice(bestActions))
 
             else: # all other agents
@@ -96,7 +101,7 @@ class MinimaxAgent(Agent):
             
         score, action = recurseWithAlphaBeta(gameState, self.depth, self.index, float('-inf'), float('inf'))
         if self.verbose:
-            print score
+            print 'Score: ', score
         return action
 
 
@@ -126,7 +131,23 @@ class MinimaxAgent(Agent):
             return dotProduct(featureVector, self.weights)
         else:
             # original implementation
-            weights = {'blocked 2': 1, 'open 2': 2, 'blocked 3': 10, 'open 3': 50, 'blocked 4': 50, 'open 4': self.WINNING_SCORE / 5, 'open 5': self.WINNING_SCORE, 'closed 5': self.WINNING_SCORE}
+            weights = {'blocked 2': 10, 'open 2': 100, 'blocked 3': 100, 'open 3': 1000, 'blocked 4': 1000}
+            otherAgentIndex = (self.index + 1) % 2 # only two agents
+
+            # Winning states
+            if (self.index, 'open 4') in state.features:
+                return self.WINNING_SCORE
+            if state.currentPlayer == self.index:
+                if (self.index, 'blocked 4') in state.features or (self.index, 'open 3') in state.features:
+                    return self.WINNING_SCORE
+
+            # Losing states
+            if (otherAgentIndex, 'open 4') in state.features:
+                return - self.WINNING_SCORE
+            if state.currentPlayer == otherAgentIndex:
+                if (otherAgentIndex, 'blocked 4') in state.features or (otherAgentIndex, 'open 3') in state.features:
+                    return - self.WINNING_SCORE
+
             score = 0
             for feature in state.features:
                 num = state.features[feature]
