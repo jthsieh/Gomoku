@@ -18,6 +18,7 @@ def learnWeights(gridSize, nInARow, verboseFlag, numberOfGames, agents):
     wins = [0, 0]
 
     for gameNum in range(numberOfGames):
+        print gameNum
         state = GameState(nInARow, gridSize, 2)
         agentIndex = 0
 
@@ -44,8 +45,11 @@ def learnWeights(gridSize, nInARow, verboseFlag, numberOfGames, agents):
                         stateFeatureVector[key] = 0
                     if not key in successorStateNewFeatures:
                         successorStateFeatureVector[key] = 0
-                        
-                    weightVector[key] = weightVector[key] - step * (dotProduct(weightVector, stateFeatureVector) - (reward + gamma * dotProduct(successorStateFeatureVector, weightVector))) * stateFeatureVector[key]
+
+                    if successorState.gameEnded(): #Do not calculate dot product if sPrime is an end state
+                        weightVector[key] = weightVector[key] - step * (dotProduct(weightVector, stateFeatureVector) - reward) * stateFeatureVector[key]
+                    else:                    
+                        weightVector[key] = weightVector[key] - step * (dotProduct(weightVector, stateFeatureVector) - (reward + gamma * dotProduct(successorStateFeatureVector, weightVector))) * stateFeatureVector[key]
 
             s = state
             agent = agents[agentIndex]

@@ -189,7 +189,8 @@ class Game:
         if len(args) >= 1 and isInt(args[0]):
             gridSize = int(args[0])
         if len(args) > 6: #Parse what kind of agents
-            print args[6]
+            print "Agent args:", args[6], len(args[6])
+            print numComputerAgents
             if numComputerAgents != len(args[6]):
                 print "\nDid not enter valid arguments!"
                 print argumentsString
