@@ -15,9 +15,6 @@ class GameState():
         boardSize:     The board will be boardSize x boardSize
         numPlayers:    How many total players in this game (including computers)
         board:         A dictionary of (position => player index)
-        currentBounds: A tuple (minX, maxX, minY, maxY) representing the
-                       rectangle that encloses the current pieces.
-                       Initialized to (inf, -inf, inf, -inf)
         gameOver:      Whether the game is over or not
         winner:        The index of the winner, -1 if the game is not over
         features:      A dictionary of ((agentIndex, description) => number)
@@ -31,15 +28,15 @@ class GameState():
         self.numPlayers = numPlayers
         if prevState == None:
             self.board = {}
+            self.legalActions = set()
             self.currentPlayer = 0
-            self.currentBounds = (float('inf'), float('-inf'), float('inf'), float('-inf'))
             self.gameOver = False
             self.winner = -1
             self.features = {}
         else:
             self.board = dict(prevState.board)
+            self.legalActions = set(prevState.legalActions)
             self.currentPlayer = prevState.currentPlayer
-            self.currentBounds = prevState.currentBounds
             self.gameOver = prevState.gameOver
             self.winner = prevState.winner
             self.features = dict(prevState.features)
@@ -47,18 +44,12 @@ class GameState():
     def getLegalActions(self):
         """
         If there are no pieces on the board, legal action is the middle of the board.
-        Otherwise, the legal actions are the positions within the rectangle that encloses the current pieces.
+        Otherwise, the legal actions are the positions around the current pieces
         """
         if len(self.board) == 0:
             return [((self.boardSize + 1) / 2, (self.boardSize + 1) / 2)]
 
-        legalActions = []
-        minX, maxX, minY, maxY = self.currentBounds # 
-        for y in range(minY, maxY + 1):
-            for x in range(minX, maxX + 1):
-                if (x, y) not in self.board:
-                    legalActions.append((x,y))
-        return legalActions
+        return list(self.legalActions)
 
     def gameEnded(self):
         """
@@ -103,13 +94,6 @@ class GameState():
         if not self.moveIsValid(player, move):
             return
         
-        # Update self.currentBounds (not sure if this is good...)
-        minX = max(min(move[0] - 1, self.currentBounds[0]), 0)
-        maxX = min(max(move[0] + 1, self.currentBounds[1]), self.boardSize - 1)
-        minY = max(min(move[1] - 1, self.currentBounds[2]), 0)
-        maxY = min(max(move[1] + 1, self.currentBounds[3]), self.boardSize - 1)
-        self.currentBounds = (minX, maxX, minY, maxY)
-
         # Update self.features
         self.board[move] = player
         self.updateFeaturesForMove(player, move)
@@ -117,6 +101,15 @@ class GameState():
             self.gameOver = True
 
         self.currentPlayer = (self.currentPlayer + 1) % self.numPlayers
+
+        # Update self.legalActions
+        x, y = move
+        if move in self.legalActions:
+            self.legalActions.remove(move)
+        for i in range(x - 2, x + 2 + 1):
+            for j in range(y - 2, y + 2 + 1):
+                if self.withinBounds((i, j)) and (i, j) not in self.board:
+                    self.legalActions.add((i, j))
 
     def getFeatures(self, index):
         # Return the features that we need for evaluationFunction
