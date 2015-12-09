@@ -121,6 +121,18 @@ class GameState():
             description = feature[1]
             newFeature = (description, num, index == agentIndex, self.currentPlayer == index)
             result.append(newFeature)
+
+        for feature in self.features:
+            for feature2 in self.features:
+                if feature == feature2:
+                    continue
+                num = self.features[feature]
+                num2 = self.features[feature2]
+                agentIndex = feature[0]
+                description = feature[1] + feature2[1]
+                newFeature = tuple([(feature[0],str(num)), (feature[1],str(num2)), str(index == agentIndex), str(self.currentPlayer == index)])
+                result.append(newFeature)
+
         return result
 
 

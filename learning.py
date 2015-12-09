@@ -17,7 +17,7 @@ def learnWeights(gridSize, nInARow, verboseFlag, numberOfGames, agents):
         weightVector = {}
 
     wins = [0, 0]
-    step = 0.5
+    step = 0.2
 
     for gameNum in range(numberOfGames):
 
@@ -32,7 +32,7 @@ def learnWeights(gridSize, nInARow, verboseFlag, numberOfGames, agents):
 
             def updateWeightVector(weightVector, sars, index):
                 gamma = 1.0
-                step = 0.5/sqrt(gameNum + 1)
+                step = 0.2/sqrt(gameNum + 1)
                 (state, action, reward, successorState) = sars
 
                 stateNewFeatures = state.getFeatures(index)

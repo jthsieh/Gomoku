@@ -28,7 +28,7 @@ class MinimaxAgent(Agent):
 
     WINNING_SCORE = 100000 # a very big number
 
-    def __init__(self, index, verbose, depth = 2, branchingFactor = 5, hardCodedWeights = False):
+    def __init__(self, index, verbose, depth = 3, branchingFactor = 2, hardCodedWeights = False):
         self.index = index
         self.depth = depth
         self.branchingFactor = branchingFactor
@@ -53,7 +53,7 @@ class MinimaxAgent(Agent):
                 if state.getWinner() == self.index:
                     return (self.WINNING_SCORE, None)
                 else:
-                    return (self.WINNING_SCORE, None)
+                    return (- self.WINNING_SCORE, None)
             if d == 0 and agentIndex == self.index:
                 return (self.evaluationFunction(state), None)
 
