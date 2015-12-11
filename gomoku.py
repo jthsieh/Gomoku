@@ -42,7 +42,16 @@ class Game:
             self.moveHistory.append((agentIndex, action))
             numberOfMoves += 1
             turnEndTime = time.clock()
-            self.state = self.state.generateSuccessor(agentIndex, action)
+            print self.state.positionToFeatures
+            print "-----------------"
+            successorState = self.state.generateSuccessor(agentIndex, action)
+            oldState = self.state
+            self.state = successorState
+
+            print successorState.positionToFeatures
+            print "-----------------"
+            print oldState.positionToFeatures
+            print "======================"
 
             if verboseFlag:
                 print self.state
@@ -163,6 +172,8 @@ class Game:
         print "Computers: " + str(numComputerAgents)
         print "Humans: " + str(numHumanAgents) + "\n"
 
+        wins = {agent: 0 for agent in range(numComputerAgents + numHumanAgents)}
+        wins[-1] = 0 #Keep track of ties
 
         wins = {i:0 for i in range(numHumanAgents + numComputerAgents)}
         for i in range(numberOfGames):
