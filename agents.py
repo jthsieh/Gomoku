@@ -28,7 +28,7 @@ class MinimaxAgent(Agent):
 
     WINNING_SCORE = 100000 # a very big number
 
-    def __init__(self, index, verbose, depth = 2, branchingFactor = 2, hardCodedWeights = False):
+    def __init__(self, index, verbose, depth = 2, branchingFactor = 10, hardCodedWeights = False):
         self.index = index
         self.depth = depth
         self.branchingFactor = branchingFactor
