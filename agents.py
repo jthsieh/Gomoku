@@ -28,7 +28,7 @@ class MinimaxAgent(Agent):
 
     WINNING_SCORE = 100000 # a very big number
 
-    def __init__(self, index, verbose, depth = 3, branchingFactor = 2, hardCodedWeights = False):
+    def __init__(self, index, verbose, depth = 2, branchingFactor = 2, hardCodedWeights = False):
         self.index = index
         self.depth = depth
         self.branchingFactor = branchingFactor
@@ -110,9 +110,13 @@ class MinimaxAgent(Agent):
         for action in legalMoves:
             nextState = state.generateSuccessor(agentIndex, action)
             if nextState.gameEnded():
-                # if it's a game winning move
-                return [(self.WINNING_SCORE, action, nextState)]
-            estimates.append((self.evaluationFunction(nextState), action, nextState))
+                if nextState.getWinner() == agentIndex:
+                    # if it's a game winning move
+                    return [(self.WINNING_SCORE, action, nextState)]
+                else:
+                    estimates.append((- self.WINNING_SCORE, action, nextState))
+            else:
+                estimates.append((self.evaluationFunction(nextState), action, nextState))
 
         if agentIndex == self.index:
             # Max agent
@@ -120,7 +124,8 @@ class MinimaxAgent(Agent):
         else:
             # Min agent
             estimates.sort(key = lambda x: x[0])
-        return estimates[:self.branchingFactor]
+        # return estimates[:self.branchingFactor]
+        return estimates
 
 
     def evaluationFunction(self, state):

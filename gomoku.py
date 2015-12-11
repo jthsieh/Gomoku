@@ -42,7 +42,16 @@ class Game:
             self.moveHistory.append((agentIndex, action))
             numberOfMoves += 1
             turnEndTime = time.clock()
-            self.state = self.state.generateSuccessor(agentIndex, action)
+            print self.state.positionToFeatures
+            print "-----------------"
+            successorState = self.state.generateSuccessor(agentIndex, action)
+            oldState = self.state
+            self.state = successorState
+
+            print successorState.positionToFeatures
+            print "-----------------"
+            print oldState.positionToFeatures
+            print "======================"
 
             if verboseFlag:
                 print self.state
@@ -163,21 +172,23 @@ class Game:
         print "Computers: " + str(numComputerAgents)
         print "Humans: " + str(numHumanAgents) + "\n"
 
+        wins = {agent: 0 for agent in range(numComputerAgents + numHumanAgents)}
+        wins[-1] = 0 #Keep track of ties
 
-        self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
-
+        for i in range(numberOfGames):
+            stats = self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
+            wins[stats["winner"]] += 1
         #numMoves = 0
         #avgMoveTime = {agent:0 for agent in range(numComputerAgents + numHumanAgents)}
-        #wins = {agent: 0 for agent in range(numComputerAgents + numHumanAgents)}
-        #wins[-1] = 0 #Keep track of ties
 
 
-        #Final Statistics
-        #print "================= Final statistics ==================="
-        #print "Number of games: " + str(numberOfGames)
+
+        # Final Statistics
+        print "================= Final statistics ==================="
+        print "Number of games: " + str(numberOfGames)
         #print "Average Total moves in game: " + str(numMoves/numberOfGames)
         #print "Average Time Per Move For Each Player: " + str(avgMoveTime)
-        #print "Wins For Each Player: " + str(wins)
+        print "Wins For Each Player: " + str(wins)
 
 if __name__ == '__main__':
     args = sys.argv[1:] # Get game components based on input
