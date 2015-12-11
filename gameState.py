@@ -237,6 +237,10 @@ class GameState():
                 continue
             # print piece
             self.positionToFeatures[piece][featureToDelete].discard(frozenset(setOfPiecesToDeleteFeatureFrom))
+            if len(self.positionToFeatures[piece][featureToDelete]) == 0:
+                del self.positionToFeatures[piece][featureToDelete]
+            if len(self.positionToFeatures[piece]) == 0:
+                del self.positionToFeatures[piece]
 
     #Add an instance of a feature for a set of pieces
     #The structure of the positionToFeatures is:
@@ -283,6 +287,9 @@ class GameState():
 
                         util.deleteItemFromDict(self.features, featureToDelete)
                         featureToAdd = (neighbor[0], 'blocked ' + str(num))
+
+                        piecesInFeature = neighbor[3]
+                        self.addPiecesToFeatureInDict(self.positionToFeatures, move, featureToAdd, piecesInFeature)
                         util.addItemToDict(self.features, featureToAdd)
                     else: # blocked
                         featureToDelete = (neighbor[0], 'blocked ' + str(num))
