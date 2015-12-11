@@ -36,6 +36,7 @@ class GameState():
             self.winner = -1
             self.features = {}
             self.positionToFeatures = dict()
+            self.previousAction = None #(player, action)
         else:
             self.board = dict(prevState.board)
             self.legalActions = set(prevState.legalActions)
@@ -44,6 +45,7 @@ class GameState():
             self.winner = prevState.winner
             self.features = dict(prevState.features)
             self.positionToFeatures = copy.deepcopy(prevState.positionToFeatures)
+            self.previousAction = prevState.previousAction
 
     def getLegalActions(self):
         """
@@ -88,6 +90,7 @@ class GameState():
         Make a copy of the current state, and simulate the move, and return that copy.
         """
         state = GameState(self.N, self.boardSize, self.numPlayers, prevState = self)
+        state.previousAction = (player, move)
         state.makeMove(player, move)
         return state
 

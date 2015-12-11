@@ -104,9 +104,86 @@ class MinimaxAgent(Agent):
             print 'Score: ', score
         return action
 
-
     def selectActions(self, state, legalMoves, agentIndex):
         estimates = [] # estimates of the next state
+        
+        movesToWin = state.N
+        blockedPreLose = 'blocked ' + str(movesToWin - 1)
+        openPreLose = 'open ' + str(movesToWin - 1)
+
+        def getActionToBlockOpenPrelose(state, piecesFrozenSet):
+            xMin = float('inf')
+            xMax = float('-inf')
+
+            yMin = float('inf')
+            yMax = float('-inf')
+
+            for x,y in piecesFrozenSet:
+                if x < xMin:
+                    xMin = x
+                if x > xMax:
+                    xMax = x
+                if y < yMin:
+                    yMin = y
+                if y > yMax:
+                    yMax = y
+
+            xCoordinate = None
+            yCoordinate = None
+            upDiagonal = False
+            downDiagonal = False
+            horizontal = False
+            vertical = False
+            
+            if abs(xMin - xMax) > 0:
+                xCoordinate = [xMin - 1, xMax + 1]
+            else:
+                xCoordinate = [xMin]
+            if abs(yMin - yMax) > 0:
+                yCoordinate = [yMin - 1, yMax + 1]
+            else:
+                yCoordinate = [yMin]
+
+            if yMin == yMax:
+                horizontal = True
+            elif xMin == xMax:
+                vertical = True
+            if (xMin, yMin) in piecesFrozenSet and horizontal == False and vertical == False:
+                upDiagonal = True
+            elif not (xMin, yMin) in piecesFrozenSet and horizontal == False and vertical == False:
+                downDiagonal = True
+
+            coordinates = None
+            if vertical:
+                coordinates = [(xMin, yMin - 1), (xMin, yMax + 1)]
+            elif horizontal:
+                coordinates = [(xMin - 1, yMin), (xMax + 1, yMin)]
+            elif upDiagonal:
+                coordinates = [(xMin - 1, yMin -1), (xMax + 1, yMax + 1)]
+            else: #Down diagonal
+                coordinates = [(xMin - 1, yMax + 1), (xMax + 1, yMin - 1)]
+
+            for coor in coordinates:
+                if state.moveIsValid(agentIndex, coor):
+                    print "Blocking your move! Gotcha!"
+                    return coor
+
+            return None
+
+        #Block the opponent if they are about to win. Note: THIS IMPLEMENTATION OPENS A FLAW
+        # WHERE THE HUMAN CAN CREATE ANY 4 TO CAUSE THE COMPUTER TO WANT TO BLOCK THE HUMAN INSTEAD OF COMPLETING
+        # THE COMPUTER'S ROW OF 4 AND WINNING
+        if state.previousAction != None and state.previousAction in state.positionToFeatures:
+            featuresForAction = state.positionToFeatures[state.previousAction[1]]
+
+            previousPlayer = state.previousAction[0]
+            if (previousPlayer, blockedPreLose) in featuresForAction or (previousPlayer, openPreLose) in featuresForAction:
+                piecesToBlockFrozenSet = next(iter(featuresForAction))
+                move = getActionToBlockOpenPrelose(state, piecesToBlockFrozenSet)
+
+                nextState = state.generateSuccessor(agentIndex, action)
+                return [(self.evaluationFunction(nextState), action, nextState)]
+
         for action in legalMoves:
             nextState = state.generateSuccessor(agentIndex, action)
             if nextState.gameEnded():
@@ -124,7 +201,7 @@ class MinimaxAgent(Agent):
         else:
             # Min agent
             estimates.sort(key = lambda x: x[0])
-        # return estimates[:self.branchingFactor]
+        return estimates[:self.branchingFactor]
         return estimates
 
 
