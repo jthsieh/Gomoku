@@ -145,7 +145,7 @@ class Game:
                 elif queryString[i] == "r":
                     agentType = RandomAgent(len(self.agents), verbose)
                 elif queryString[i] == "h":
-                    agentType = MinimaxAgent(len(self.agents), verbose, hardCodedWeights = True)
+                    agentType = MinimaxAgent(len(self.agents), verbose, depth = 3, hardCodedWeights = True)
                 else:
                     print "\nDid not enter valid arguments! Invalid agent types"
                     print argumentsString
@@ -164,20 +164,21 @@ class Game:
         print "Humans: " + str(numHumanAgents) + "\n"
 
 
-        self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
+        wins = {i:0 for i in range(numHumanAgents + numComputerAgents)}
+        for i in range(numberOfGames):
+            print 'Game ' + str(i + 1)
+            stats = self.runGames(gridSize, nInARow, numComputerAgents, numHumanAgents, verbose)
+            wins[stats['winner']] += 1
 
-        #numMoves = 0
-        #avgMoveTime = {agent:0 for agent in range(numComputerAgents + numHumanAgents)}
-        #wins = {agent: 0 for agent in range(numComputerAgents + numHumanAgents)}
-        #wins[-1] = 0 #Keep track of ties
+        resultMessage = ''
+        for index in wins:
+            resultMessage += str(index) + ': ' + str(wins[index]) + ', '
 
-
-        #Final Statistics
-        #print "================= Final statistics ==================="
-        #print "Number of games: " + str(numberOfGames)
-        #print "Average Total moves in game: " + str(numMoves/numberOfGames)
-        #print "Average Time Per Move For Each Player: " + str(avgMoveTime)
-        #print "Wins For Each Player: " + str(wins)
+        # Final Statistics
+        print "================= Final statistics ==================="
+        print "Number of games: " + str(numberOfGames)
+        print "Wins For Each Player: " + resultMessage
+        print "Win percentage (player 0): " + str(float(wins[0]) / numberOfGames * 100) + '%'
 
 if __name__ == '__main__':
     args = sys.argv[1:] # Get game components based on input
