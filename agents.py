@@ -35,7 +35,7 @@ class MinimaxAgent(Agent):
         self.hardCodedWeights = hardCodedWeights
 
         try:
-            with open('weightVector.p', 'rb') as f:
+            with open('weightVector4.p', 'rb') as f:
                 self.weights = pickle.load(f)
                 f.close()
         except IOError:
@@ -216,18 +216,22 @@ class MinimaxAgent(Agent):
             weights = {'blocked 2': 10, 'open 2': 100, 'blocked 3': 100, 'open 3': 1000, 'blocked 4': 1000}
             otherAgentIndex = (self.index + 1) % 2 # only two agents
 
+            threat1 = 'open ' + str(state.N - 1)
+            threat2 = 'blocked ' + str(state.N - 1)
+            threat3 = 'open ' + str(state.N - 2)
+
             # Winning states
-            if (self.index, 'open 4') in state.features:
+            if (self.index, threat1) in state.features:
                 return self.WINNING_SCORE
             if state.currentPlayer == self.index:
-                if (self.index, 'blocked 4') in state.features or (self.index, 'open 3') in state.features:
+                if (self.index, threat2) in state.features and (self.index, threat3) in state.features:
                     return self.WINNING_SCORE
 
             # Losing states
-            if (otherAgentIndex, 'open 4') in state.features:
+            if (otherAgentIndex, threat1) in state.features:
                 return - self.WINNING_SCORE
             if state.currentPlayer == otherAgentIndex:
-                if (otherAgentIndex, 'blocked 4') in state.features or (otherAgentIndex, 'open 3') in state.features:
+                if (otherAgentIndex, threat2) in state.features and (otherAgentIndex, threat3) in state.features:
                     return - self.WINNING_SCORE
 
             score = 0

@@ -10,7 +10,7 @@ def learnWeights(gridSize, nInARow, verboseFlag, numberOfGames, agents):
 
     weightVector = None
     try:
-        with open( "weightVector.p", "rb" ) as f:
+        with open( "weightVector4.p", "rb" ) as f:
             weightVector = pickle.load(f)
             f.close()
     except IOError:
