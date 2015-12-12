@@ -213,7 +213,7 @@ class MinimaxAgent(Agent):
             return dotProduct(featureVector, self.weights)
         else:
             # original implementation
-            weights = {'blocked 2': 10, 'open 2': 100, 'blocked 3': 100, 'open 3': 1000, 'blocked 4': 1000}
+            weights = {'blocked 2': 10, 'open 2': 100, 'blocked 3': 100, 'open 3': 1000, 'blocked 4': 1000, 'open 4': 10000, 'blocked 5': 10000}
             otherAgentIndex = (self.index + 1) % 2 # only two agents
 
             threat1 = 'open ' + str(state.N - 1)
