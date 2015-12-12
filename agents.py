@@ -106,6 +106,23 @@ class MinimaxAgent(Agent):
 
     def selectActions(self, state, legalMoves, agentIndex):
         estimates = [] # estimates of the next state
+        for action in legalMoves:
+            nextState = state.generateSuccessor(agentIndex, action)
+            if nextState.gameEnded():
+                if nextState.getWinner() == agentIndex:
+                    # if it's a game winning move
+                    return [(self.WINNING_SCORE, action, nextState)]
+                else:
+                    estimates.append((- self.WINNING_SCORE, action, nextState))
+            else:
+                estimates.append((self.evaluationFunction(nextState), action, nextState))
+
+        if agentIndex == self.index:
+            # Max agent
+            estimates.sort(key = lambda x: -x[0])
+        else:
+            # Min agent
+            estimates.sort(key = lambda x: x[0])
         
         movesToWin = state.N
         blockedPreLose = 'blocked ' + str(movesToWin - 1)
@@ -184,25 +201,8 @@ class MinimaxAgent(Agent):
                 nextState = state.generateSuccessor(agentIndex, action)
                 return [(self.evaluationFunction(nextState), action, nextState)]
 
-        for action in legalMoves:
-            nextState = state.generateSuccessor(agentIndex, action)
-            if nextState.gameEnded():
-                if nextState.getWinner() == agentIndex:
-                    # if it's a game winning move
-                    return [(self.WINNING_SCORE, action, nextState)]
-                else:
-                    estimates.append((- self.WINNING_SCORE, action, nextState))
-            else:
-                estimates.append((self.evaluationFunction(nextState), action, nextState))
 
-        if agentIndex == self.index:
-            # Max agent
-            estimates.sort(key = lambda x: -x[0])
-        else:
-            # Min agent
-            estimates.sort(key = lambda x: x[0])
         return estimates[:self.branchingFactor]
-        return estimates
 
 
     def evaluationFunction(self, state):
